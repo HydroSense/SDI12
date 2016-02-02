@@ -9,6 +9,8 @@ String send = "0D0!"; // send data (back to host) command
 
 String longtest = "aMC!";
 
+int i = 0;
+
 void setup(){
     Serial.begin(9600);
     mySerial.begin(1200);
@@ -16,6 +18,10 @@ void setup(){
 }
 
 void loop(){
-    mySerial.print("hello");
-    delay(1000);
+    if(i++ == 100){
+        i = 0;
+        mySerial.print("hello");
+    }
+    for(unsigned int j = 0; j<10000; j++);
+//    delay(1);
 }

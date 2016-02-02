@@ -36,7 +36,7 @@ void loop(){
         Serial.println(input[5], HEX);
         Serial.println(input[6], HEX);
         Serial.println(input[7], HEX);
-        Serial.print("Non-inverted ASCII: ");
+/*        Serial.print("Non-inverted ASCII: ");
         Serial.println(input);
         Serial.print("Inverted ASCII: ");
         input[0] = ~input[0] & 0xFE;
@@ -47,6 +47,7 @@ void loop(){
         Serial.println(input[1]);
         Serial.println(input[2]);
         Serial.println(input[3]);
+        */
     }
 }
 
