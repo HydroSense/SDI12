@@ -1,4 +1,3 @@
-
 String meas = "0M!"; // measure command
 String send = "0D0!"; // send data (back to host) command
 
@@ -13,6 +12,6 @@ void setup(){
 }
 
 void loop(){
-    Serial1.print("hello");
+    Serial1.print("hello\n");
     delay(1000);
 }
