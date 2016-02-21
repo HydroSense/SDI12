@@ -119,8 +119,93 @@ None.
 # `SDI12Slave`
 Slave mode for SDI-12.  Respond to master queries, returning data that the master requests.
 
-#### `SDI12Slave::SDI12Slave(pin)`
-Initializes an instance of SDI12Slave.
+### `SDI12Slave::SDI12Slave(int pin)`
+Initialize a slave object.
 
-### Arguments
-  * **pin**: pin used for flow control management
+#### Arguments
+  * **pin**: digital I/O pin used for flow control
+
+
+### `void SDI12Slave::ack(unsigned int seconds, unsigned int numResponses)`
+Acknowledge an SDI-12 data request.  Lets the master know how long it will take
+for the slave to respond and what data is going to respond.
+
+#### Arguments
+  * **seconds**: number of seconds it will take to process the request
+  * **numResponses**: number of measurement values the slave will respond with
+
+#### Return Value
+None.
+
+
+### `int SDI12Slave::begin()`
+Starts the SDI-12 object, binds the hardware serial port and digial I/O pins.
+
+#### Arguments
+None.
+
+#### Return Value
+None.
+
+
+### `void SDI12Slave::beginTransmission()`
+Starts an SDI-12 transmission, performs synchronization to ensure data is being
+written at the same time.
+
+#### Arguments
+None.
+
+#### Return Value
+None.
+
+
+### `void SDI12Slave::end()`
+Stops the SDI-12 slave device and unbinds hardware serial device and I/O pin.
+
+#### Arguments
+None.
+
+#### Return Value
+None.
+
+
+### `void SDI12Slave::endTransmission()`
+Ends an SDI-12 transmission.
+
+#### Arguments
+None.
+
+#### Return Value
+None.
+
+
+### `char SDI12Slave::listen()`
+Wait for a data request command from the master.  Function blocks until a command
+has been received.  Also allows other internal SDI-12 protocol commands to be
+processed by the library.
+
+#### Arguments
+None.
+
+#### Return Value
+The command number that has been received.  Set to '0' if this is a standard
+measurement request ('aM!').
+
+
+### `int SDI12Slave::write(int value)`
+Appends the data to the response string.  Does not send the value
+
+#### Arguments
+  * **value**: Value to send
+
+#### Return Value
+0 if append is successful
+
+<0 if out of buffer space
+
+
+### `int SDI12Slave::write(float value)`
+Appends the data to the response string.
+
+#### Arguments
+  * **value**: Value to send

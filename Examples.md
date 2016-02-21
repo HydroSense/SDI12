@@ -65,3 +65,55 @@ sdiMaster.changeAddress('0', '5');
 sdiMaster.startMeasurement('5');
 ...
 ```
+
+## SDI12Slave
+
+### Example 1: Simple Wait for Response
+
+```C
+#define FLOW_CONTROL_PIN 10
+SDI12Slave sdiSlave(FLOW_CONTROL_PIN);
+
+void setup() {
+  sdiSlave.begin();
+}
+
+void loop() {
+  char cmd = sdiSlave.listen();     // wait for a command signal
+  sdiSlave.ack(10, 2);
+
+  ...                               // read the sensor data
+
+  sdiSlave.beginTransmission();
+  sdiSlave.write(sensorVal1);
+  sdiSlave.write(sensorVal2);
+  sdiSlave.endTransmission();
+}
+```
+
+### Example 2: Multiple Data Request Commands
+
+```C
+char cmd = sdiSlave.listen();
+if (cmd == '0') {
+  sdiSlave.ack(1, 1);  
+
+  ...                               // read sensors
+
+  sdiSlave.beginTransmission();
+  sdiSlave.write(sensorVal);
+  sdiSlave.endTransmission();
+} else if (cmd == '1') {
+  sdiSlave.ack(0, 3);
+
+  ...                               // read sensors
+
+  sdiSlave.beginTransmission();
+  sdiSlave.write(sensorVal1);
+  sdiSlave.write(sensorVal2);
+  sdiSlave.write(-5);
+} else {
+  sdiSlave.ack(0, 0);
+}
+
+```
