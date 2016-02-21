@@ -112,6 +112,7 @@ if (cmd == '0') {
   sdiSlave.write(sensorVal1);
   sdiSlave.write(sensorVal2);
   sdiSlave.write(-5);
+  sdiSlave.endTransmission();
 } else {
   sdiSlave.ack(0, 0);
 }
