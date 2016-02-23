@@ -8,62 +8,41 @@ This program initializes a master node and reads all data from address 0.
 
 ```C
 #define FLOW_CONTROL_PIN 10
-SDI12Master sdiMaster(FLOW_CONTROL_PIN);
 
-char data[256];
+SDIBusController sdiBus(FLOW_CONTROL_PIN, 2);
+SDIRemoteSensor genericSensor('A');
+DecagonSensor decagon('X');
 
 void setup() {
-  sdiMaster.begin();
+  SDIBus.register(genericSensor);
+  SDIBus.register(decagon);
+  SDIBus.begin(FLOW_CONTROL_PIN);
 
-  Serial.begin(9600);
+
+
+  Serial.begin(9600)
 }
 
 void loop() {
-  // start the measurement
-  sdiMaster.startMeasurement('0');
+  SDIBusController.eventLoop();
 
-  // wait while we aren't available
-  while (sdiMaster.available() == 0);
+  if (decagon.available()) {
+    int temp = decagon.temperature();
 
-  // save the data in the buffer
-  sdiMaster.read(data, 256);
+    Serial.write("temp: ");
+    Serial.writeln(temp);
 
-  // print out results
-  Serial.println("Received SDI12 Data");
-  Serial.println(data);
+    decagon.refresh();
+  }
+  if (genericSensor.available()) {
+    float measurement = genericSensor.value(1);
+
+    Serial.write("measurement: ");
+    Serial.writeln(measurement);
+
+    measurement.refresh('1');
+  }
 }
-```
-
-### Example 2: Additional Measurement
-
-```C
-sdiMaster.startAdditionalMeasurement('0', '1');
-
-while (sdiMaster.available() == 0);
-
-sdiMaster.read(data, 256);
-
-Serial.println("Received SDI12 Data");
-Serial.println(data);
-```
-
-### Example 3: Wake Then Query
-
-```C
-sdiMaster.wake();
-sdiMaster.startMeasurement('0');
-
-while(sdiMaster.available() != 0);
-
-sdiMaster.read(data);
-```
-
-### Example 4: Wake, Change Address, Query
-```C
-sdiMaster.wake();
-sdiMaster.changeAddress('0', '5');
-sdiMaster.startMeasurement('5');
-...
 ```
 
 ## SDI12Slave
