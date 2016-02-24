@@ -1,6 +1,8 @@
 #ifndef __SDI_BUS_CONTROLLER_HPP
 #define __SDI_BUS_CONTROLLER_HPP
 
+#define SDI_MAX_RESPONSE_TIME 15
+
 class SDIRemoteSensor;
 
 enum SDIBusError {
@@ -25,6 +27,8 @@ private:
 
   SDIRemoteSensor* findSensorFromAddress(char addr);
   void sendPreamble();
+  void setBufferWrite();
+  void setBufferRead();
 public:
   SDIBusController(int flowControlPin, unsigned int maxSensors);
 

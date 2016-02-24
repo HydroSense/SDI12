@@ -47,7 +47,7 @@ int SDIBusController::register(SDIRemoteSensor& sensor) {
 
 void sendPreamble() {
     // Set tri-state buffer to write mode
-    digitalWrite(mFlowControlPin, 0);
+    setBufferWrite();
 
     // Stop Serial1
     Serial1.end();
@@ -59,6 +59,14 @@ void sendPreamble() {
     
     // re-enable Serial1
     Serial1.begin(1200, SERIAL_7E1);
+}
+
+void setBufferWrite(){
+    digitalWrite(mFlowControlPin, 0);
+}
+
+void setBufferRead(){
+    digitalWrite(mFlowControlPin, 1);
 }
 
 void SDIBusController::eventLoop() {
@@ -88,10 +96,36 @@ int SDIBusController::acknowledgeActive(char addr) {
     sendPreamble();
     Serial1.write(addr+"!");
 
-   Serial1.end();
+    setBufferRead();
 
+    int numDelays = 0;
+    // Expect a 3 byte response
+    while( Serial1.available() < 3 ){
+        numDelays++;
+        if( numDelays == SDI_MAX_RESPONSE_TIME ){
+            // TIME OUT - set error variable
+            return -1;
+        }
+        delay(1);
+    }
 
-  return -1;
+    if( Serial1.available() < 3 ) {
+        // Incorrect response - set error variable
+        return -1;
+    }
+
+    // expected: sensor address char, <CR>, <LF>
+    char[] expected = {addr, 0xD, 0xA};
+
+    // sequentially compare each byte to expected
+    for(int i=0; i<3; i++){
+        if( Serial1.read() != expected[i] ){
+            // Incorrect response - set error variable
+            return -1;
+        }
+    }
+
+    return 0; // we made it
 }
 
 int SDIBusController::refresh(char addr, int altno) {
