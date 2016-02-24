@@ -11,6 +11,8 @@
 // an instance of the sensor
 SDIBusController SDIBus;
 
+SDIBusError SDIBusErrno;
+
 /* Private Members */
 SDIBusController::SDIBusController() {
   mMaxSensorCount = 0;
@@ -24,7 +26,7 @@ void SDIBusController::begin(int flowControlPin, unsigned int maxSensors) {
   mSensorCount = 0;
 
   // allocate memory for the sensors
-  mSensors = calloc(mMaxSensors, sizeof(SDIRemoteSensor*));
+ // mSensors = calloc(mMaxSensors, sizeof(SDIRemoteSensor*));
 
     pinMode(mFlowControlPin, OUTPUT);
     Serial1.begin(1200, SERIAL_7E1);
@@ -36,6 +38,7 @@ void SDIBusController::end(void) {
     digitalWrite(mFlowControlPin, 1); // buffer is receiving
 }
 
+/*
 int SDIBusController::register(SDIRemoteSensor& sensor) {
   SDIBusErrno = OK;
 
@@ -52,8 +55,9 @@ int SDIBusController::register(SDIRemoteSensor& sensor) {
   mSensors[mSensorCount++] = &sensor;
   return 0;
 }
+*/
 
-void sendPreamble() {
+void SDIBusController::sendPreamble() {
     // Set tri-state buffer to write mode
     setBufferWrite();
 
@@ -69,14 +73,15 @@ void sendPreamble() {
     Serial1.begin(1200, SERIAL_7E1);
 }
 
-void setBufferWrite(){
+void SDIBusController::setBufferWrite(){
     digitalWrite(mFlowControlPin, 0);
 }
 
-void setBufferRead(){
+void SDIBusController::setBufferRead(){
     digitalWrite(mFlowControlPin, 1);
 }
 
+/*
 void SDIBusController::eventLoop() {
   unsigned long currentTime = getMillis();
 
@@ -95,6 +100,7 @@ void SDIBusController::eventLoop() {
     }
   }
 }
+*/
 
 char SDIBusController::addressQuery(void) {
   return 255;
@@ -118,7 +124,7 @@ int SDIBusController::acknowledgeActive(char addr) {
     }
 
     // expected: sensor address char, <CR>, <LF>
-    char[] expected = {addr, '\r', '\n'};
+    char expected[] = {addr, '\r', '\n'};
 
     // sequentially compare each byte to expected
     for(int i=0; i<3; i++){

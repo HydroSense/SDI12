@@ -3,7 +3,7 @@
 
 #define SDI_MAX_RESPONSE_TIME 15
 
-class SDIRemoteSensor;
+//class SDIRemoteSensor{};
 
 enum SDIBusError {
   OK,
@@ -15,7 +15,7 @@ enum SDIBusError {
   TIMEOUT,
   UNREGISTERED_SENSOR
 };
-SDIBusError SDIBusErrno;
+extern SDIBusError SDIBusErrno;
 
 struct SDIDeviceInfo {
   char vendor[9];
@@ -25,27 +25,27 @@ struct SDIDeviceInfo {
 };
 
 class SDIBusController {
-  friend class SDIRemoteSensor;
+//  friend class SDIRemoteSensor;
 private:
-  SDIRemoteSensor** mSensors;
+//  SDIRemoteSensor** mSensors;
   unsigned int mMaxSensorCount;
   unsigned int mSensorCount;
   int mFlowControlPin;
 
-  SDIRemoteSensor* findSensorFromAddress(char addr);
+//  SDIRemoteSensor* findSensorFromAddress(char addr);
   void sendPreamble();
   void setBufferWrite();
   void setBufferRead();
 
   // private constructor
-  SDIBusController();
+  public:SDIBusController();
 
 public:
   void begin(int flowControlPin, unsigned int maxSensors);
   void end(void);
 
-  int register(SDIRemoteSensor& sensor);
-  void eventLoop(void);
+//  int register(SDIRemoteSensor& sensor);
+//  void eventLoop(void);
 
   char addressQuery(void);
   int acknowledgeActive(char addr);

@@ -1,4 +1,4 @@
-#ifndef __SDI_REMOTE_SENSOR_HPP
+#if 0
 #define __SDI_REMOTE_SENSOR_HPP
 
 #include "SDIBusController.hpp"
