@@ -46,11 +46,16 @@ int SDIRemoteSensor::refresh(int altno) {
 }
 
 const float* SDIRemoteSensor::values() {
+  mAvailable = 0;
   return (const float*)mValues;
 }
 
 float SDIRemoteSensor::value(int index) {
-  if (index > 9) { return nan(""); }
+  if (index > 9) {
+    return nan("");
+  }
+
+  mAvailable = 0;
   return mValues[index];
 }
 

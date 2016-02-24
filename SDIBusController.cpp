@@ -46,12 +46,24 @@ void SDIBusController::eventLoop() {
     SDIRemoteSensor* sensorPtr = mSensor[i];
 
     // if the sensor is in the middle of a request and we are ready, then process
-    if (sensorPtr->busy() && currentTime >= sensorPtr->mReadyTimestamp) {
+    if (sensorPtr->mBusy && currentTime >= sensorPtr->mReadyTimestamp) {
       sensorPtr->mBusy = 0;
+      int status = this->getData(sensorPtr->mAddr, sensorPtr->data);
+      if (status < 0) {
+        continue;
+      }
 
-      this->getData(sensorPtr);
+      sensorPtr->mAvailable = 1;
     }
   }
+}
+
+char SDIBusController::addressQuery(void) {
+  return 255;
+}
+
+int SDIBusController::acknowledgeActive(char addr) {
+  return -1;
 }
 
 int SDIBusController::refresh(char addr, int altno) {

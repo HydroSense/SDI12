@@ -33,6 +33,9 @@ public:
   int register(SDIRemoteSensor& sensor);
   void eventLoop(void);
 
+  char addressQuery(void);
+  int acknowledgeActive(char addr);
+
   int refresh(char addr, int altno);
   int getData(char addr, float* buffer);
   int changeAddress(char oldAddr, char newAddr);
