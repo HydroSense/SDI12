@@ -12,16 +12,20 @@
 SDIBusController SDIBus;
 
 /* Private Members */
-SDIBusController::SDIBusController(int flowControlPin, unsigned int maxSensors) {
-  mMaxSensorCount = maxSensors;
+SDIBusController::SDIBusController() {
+  mMaxSensorCount = 0;
   mSensorCount = 0;
-
-  mFlowControlPin = flowControlPin;
-  mSensors = calloc(mMaxSensors, sizeof(SDIRemoteSensor*));
+  mFlowControlPin = -1;
 }
 
 /* Public Members */
 void SDIBusController::begin(int flowControlPin, unsigned int maxSensors) {
+  mMaxSensorCount = maxSensors;
+  mSensorCount = 0;
+
+  // allocate memory for the sensors
+  mSensors = calloc(mMaxSensors, sizeof(SDIRemoteSensor*));
+
     pinMode(mFlowControlPin, OUTPUT);
     Serial1.begin(1200, SERIAL_7E1);
 }
