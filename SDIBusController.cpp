@@ -109,13 +109,8 @@ int SDIBusController::acknowledgeActive(char addr) {
         delay(1);
     }
 
-    if( Serial1.available() < 3 ) {
-        // Incorrect response - set error variable
-        return -1;
-    }
-
     // expected: sensor address char, <CR>, <LF>
-    char[] expected = {addr, 0xD, 0xA};
+    char[] expected = {addr, '\r', '\n'};
 
     // sequentially compare each byte to expected
     for(int i=0; i<3; i++){
