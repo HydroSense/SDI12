@@ -17,9 +17,15 @@ SDIBusController::SDIBusController(int flowControlPin, unsigned int maxSensors) 
 }
 
 void SDIBusController::begin(void) {
+
+    pinMode(mFlowControlPin, OUTPUT);
+    Serial1.begin(1200, SERIAL_7E1);
 }
 
 void SDIBusController::end(void) {
+
+    Serial1.end();
+    digitalWrite(mFlowControlPin, 1); // buffer is receiving
 }
 
 int SDIBusController::register(SDIRemoteSensor& sensor) {
@@ -37,6 +43,22 @@ int SDIBusController::register(SDIRemoteSensor& sensor) {
 
   mSensors[mSensorCount++] = &sensor;
   return 0;
+}
+
+void sendPreamble() {
+    // Set tri-state buffer to write mode
+    digitalWrite(mFlowControlPin, 0);
+
+    // Stop Serial1
+    Serial1.end();
+
+    digitalWrite(1, 0);
+    delayMicroseconds(12000); // wait for 12 ms
+    digitalWrite(1, 1);
+    delayMicroseconds(8300); // wait for 8.3 ms
+    
+    // re-enable Serial1
+    Serial1.begin(1200, SERIAL_7E1);
 }
 
 void SDIBusController::eventLoop() {
@@ -63,6 +85,12 @@ char SDIBusController::addressQuery(void) {
 }
 
 int SDIBusController::acknowledgeActive(char addr) {
+    sendPreamble();
+    Serial1.write(addr+"!");
+
+   Serial1.end();
+
+
   return -1;
 }
 

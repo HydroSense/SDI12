@@ -24,6 +24,7 @@ private:
   int mFlowControlPin;
 
   SDIRemoteSensor* findSensorFromAddress(char addr);
+  void sendPreamble();
 public:
   SDIBusController(int flowControlPin, unsigned int maxSensors);
 
