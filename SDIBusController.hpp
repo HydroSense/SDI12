@@ -17,6 +17,13 @@ enum SDIBusError {
 };
 SDIBusError SDIBusErrno;
 
+struct SDIDeviceInfo {
+  char vendor[9];
+  char model[7];
+  char version[4];
+  char optional[14];
+};
+
 class SDIBusController {
   friend class SDIRemoteSensor;
 private:
@@ -29,10 +36,12 @@ private:
   void sendPreamble();
   void setBufferWrite();
   void setBufferRead();
-public:
-  SDIBusController(int flowControlPin, unsigned int maxSensors);
 
-  void begin(void);
+  // private constructor
+  SDIBusController();
+
+public:
+  void begin(int flowControlPin, unsigned int maxSensors);
   void end(void);
 
   int register(SDIRemoteSensor& sensor);
@@ -40,10 +49,14 @@ public:
 
   char addressQuery(void);
   int acknowledgeActive(char addr);
+  int identify(char addr, SDIDeviceInfo* devInfo);
 
   int refresh(char addr, int altno);
   int getData(char addr, float* buffer);
   int changeAddress(char oldAddr, char newAddr);
 };
+
+// singleton declaration
+extern SDIBusController SDIBus;
 
 #endif

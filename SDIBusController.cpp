@@ -2,12 +2,16 @@
 #define __SDI_BUS_CONTROLLER_CPP
 
 #include <stdlib.h>
-#include <Arduino.h>
+#include "Arduino.h"
 
 #include "SDIBusController.hpp"
 #include "SDIRemoteSensor.hpp"
 
-/* Public Members */
+// define the singleton insance of this, will not allow anyone else to declare
+// an instance of the sensor
+SDIBusController SDIBus;
+
+/* Private Members */
 SDIBusController::SDIBusController(int flowControlPin, unsigned int maxSensors) {
   mMaxSensorCount = maxSensors;
   mSensorCount = 0;
@@ -16,8 +20,8 @@ SDIBusController::SDIBusController(int flowControlPin, unsigned int maxSensors) 
   mSensors = calloc(mMaxSensors, sizeof(SDIRemoteSensor*));
 }
 
-void SDIBusController::begin(void) {
-
+/* Public Members */
+void SDIBusController::begin(int flowControlPin, unsigned int maxSensors) {
     pinMode(mFlowControlPin, OUTPUT);
     Serial1.begin(1200, SERIAL_7E1);
 }
@@ -56,7 +60,7 @@ void sendPreamble() {
     delayMicroseconds(12000); // wait for 12 ms
     digitalWrite(1, 1);
     delayMicroseconds(8300); // wait for 8.3 ms
-    
+
     // re-enable Serial1
     Serial1.begin(1200, SERIAL_7E1);
 }
