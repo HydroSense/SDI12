@@ -22,6 +22,7 @@ SDIBusController::SDIBusController() {
 
 /* Public Members */
 void SDIBusController::begin(int flowControlPin, unsigned int maxSensors) {
+  mFlowControlPin = flowControlPin;
   mMaxSensorCount = maxSensors;
   mSensorCount = 0;
 
@@ -64,9 +65,9 @@ void SDIBusController::sendPreamble() {
     // Stop Serial1
     Serial1.end();
 
-    digitalWrite(1, 0);
+    digitalWrite(mFlowControlPin, 0);
     delayMicroseconds(12000); // wait for 12 ms
-    digitalWrite(1, 1);
+    digitalWrite(mFlowControlPin, 1);
     delayMicroseconds(8300); // wait for 8.3 ms
 
     // re-enable Serial1
@@ -108,7 +109,8 @@ char SDIBusController::addressQuery(void) {
 
 int SDIBusController::acknowledgeActive(char addr) {
     sendPreamble();
-    Serial1.write(addr+"!");
+    Serial1.write(addr);
+    Serial1.write('!');
 
     setBufferRead();
 
