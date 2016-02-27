@@ -8,12 +8,12 @@
 enum SDIBusError {
   OK,
   BUSY,
-  NOT_FOUND,
   ADDRESS_IN_USE,
   BAD_ADDRESS,
   NO_SPACE,
   TIMEOUT,
-  UNREGISTERED_SENSOR
+  UNREGISTERED_SENSOR,
+  RESPONSE_ERROR
 };
 extern SDIBusError SDIBusErrno;
 
@@ -47,13 +47,15 @@ public:
 //  int register(SDIRemoteSensor& sensor);
 //  void eventLoop(void);
 
-  char addressQuery(void);
+  int addressQuery(char* outAddr);
   int acknowledgeActive(char addr);
   int identify(char addr, SDIDeviceInfo* devInfo);
 
   int refresh(char addr, int altno);
   int getData(char addr, float* buffer);
   int changeAddress(char oldAddr, char newAddr);
+
+  int respondToAcknowledgeActive(char addr);
 };
 
 // singleton declaration

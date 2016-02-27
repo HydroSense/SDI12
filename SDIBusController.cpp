@@ -1,6 +1,10 @@
 #ifndef __SDI_BUS_CONTROLLER_CPP
 #define __SDI_BUS_CONTROLLER_CPP
 
+// XXX: remove on product
+#include <iostream>
+using namespace std;
+
 #include <stdlib.h>
 #include "Arduino.h"
 
@@ -10,7 +14,6 @@
 // define the singleton insance of this, will not allow anyone else to declare
 // an instance of the sensor
 SDIBusController SDIBus;
-
 SDIBusError SDIBusErrno;
 
 /* Private Members */
@@ -103,40 +106,59 @@ void SDIBusController::eventLoop() {
 }
 */
 
-char SDIBusController::addressQuery(void) {
-  return 255;
+int SDIBusController::addressQuery(char* outAddr) {
+  sendPreamble();
+
+  Serial1.write('?');
+  Serial1.write('!');
+
+  // TODO(colby): same as below
+  while(!Serial1.available()); delay(1);
+  char c0 = Serial1.read();
+  while(!Serial1.available()); delay(1);
+  char c1 = Serial1.read();
+  while(!Serial1.available()); delay(1);
+  char c2 = Serial1.read();
+
+  if (c1 != '\r' || c2 != '\n') {
+    cout << "Failure" << endl;
+    SDIBusErrno = RESPONSE_ERROR;
+    return -1;
+  }
+
+  *outAddr = c0;
+  cout << "Success" << endl;
+
+  SDIBusErrno = OK;
+  return 0; // we made it
 }
 
 int SDIBusController::acknowledgeActive(char addr) {
-    sendPreamble();
-    Serial1.write(addr);
-    Serial1.write('!');
+  sendPreamble();
 
-    setBufferRead();
+  // write data out the serial
+  Serial1.write(addr);
+  Serial1.write('!');
 
-    int numDelays = 0;
-    // Expect a 3 byte response
-    while( Serial1.available() < 3 ){
-        numDelays++;
-        if( numDelays == SDI_MAX_RESPONSE_TIME ){
-            // TIME OUT - set error variable
-            return -1;
-        }
-        delay(1);
-    }
+  // TODO(colby): add direction control
 
-    // expected: sensor address char, <CR>, <LF>
-    char expected[] = {addr, '\r', '\n'};
+  // TODO(colby): add timeout handling
+  while(!Serial1.available()); delay(1);
+  char c0 = Serial1.read();
+  while(!Serial1.available()); delay(1);
+  char c1 = Serial1.read();
+  while(!Serial1.available()); delay(1);
+  char c2 = Serial1.read();
 
-    // sequentially compare each byte to expected
-    for(int i=0; i<3; i++){
-        if( Serial1.read() != expected[i] ){
-            // Incorrect response - set error variable
-            return -1;
-        }
-    }
+  if (c0 != addr || c1 != '\r' || c2 != '\n') {
+    cout << "Failure" << endl;
+    SDIBusErrno = RESPONSE_ERROR;
+    return -1;
+  }
+  cout << "Success" << endl;
 
-    return 0; // we made it
+  SDIBusErrno = OK;
+  return 0; // we made it
 }
 
 int SDIBusController::refresh(char addr, int altno) {
@@ -149,6 +171,15 @@ int SDIBusController::getData(char addr, float* buffer) {
 
 int SDIBusController::changeAddress(char oldAddr, char newAddr) {
   return -1;
+}
+
+int SDIBusController::respondToAcknowledgeActive(char addr) {
+  Serial1.write(addr);
+  Serial1.write('\r');
+  Serial1.write('\n');
+
+  SDIBusErrno = OK;
+  return 0;
 }
 
 #endif

@@ -9,7 +9,16 @@ using namespace std;
 #define FLOW_CONTROL_PIN 13
 
 int main(int argc, char** argv) {
+  cout << "Started test..." << endl;
+
+  cout << "connecting to domain socket...";
+  Serial1.connectDomainSocket();
+  cout << "done!" << endl;
+
   SDIBus.begin(FLOW_CONTROL_PIN, 0);
 
-  SDIBus.acknowledgeActive('0');
+  int res = SDIBus.acknowledgeActive('0');
+  if (res < 0) {
+    cout << "ERR: " << SDIBusErrno << endl;
+  }
 }

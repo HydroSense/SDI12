@@ -16,15 +16,17 @@ void delay(int msec);
 class ShimSerial {
 private:
   bool mActive;
+  int mListenSocket;
+  int mDomainSocket;
 
   int mType;
   int mBaud;
 
-  char mBuffer[SHIM_SERIAL_BUFFER_SIZE];
-  int mBufferIndex;
-
 public:
   ShimSerial();
+  void serveDomainSocket();
+  void connectDomainSocket();
+  void disconnectDomainSocket();
 
   void begin(int baud, int type);
   void end();

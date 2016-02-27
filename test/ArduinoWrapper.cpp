@@ -3,7 +3,16 @@
 
 #include "Arduino.h"
 
+#include <errno.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/un.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#include <stdlib.h>
 #include <time.h>
 #include <iostream>
 using namespace std;
@@ -32,7 +41,7 @@ void delayMicroseconds(int usec) {
 
   struct timespec tim;
   tim.tv_sec = 0;
-  tim.tv_nsec = 1000L * (long)usec;
+  tim.tv_nsec = 100L*1000L * (long)usec;
   nanosleep(&tim, NULL);
 }
 void delay(int msec) {
@@ -40,16 +49,80 @@ void delay(int msec) {
 
   struct timespec tim;
   tim.tv_sec = 0;
-  tim.tv_nsec = 1000L*1000L * (long)msec;
+  tim.tv_nsec = 100L*1000L*1000L * (long)msec;
   nanosleep(&tim, NULL);
 }
 
 ShimSerial::ShimSerial() {
+  mListenSocket = -1;
+  mDomainSocket = -1;
+
   mActive = false;
-  mBufferIndex = 0;
 
   mType = 0;
   mBaud = 0;
+}
+
+void ShimSerial::serveDomainSocket() {
+  int res;
+
+  mListenSocket = socket(AF_UNIX, SOCK_STREAM, 0);
+  if (mListenSocket < 0) {
+    perror("Socket Error: ");
+    exit(-1);
+  }
+
+  struct sockaddr_un addr;
+  memset(&addr, 0, sizeof(addr));
+  addr.sun_family = AF_UNIX;
+  strncpy(addr.sun_path, "SDI12.socket", sizeof(addr.sun_path)-1);
+  unlink("SDI12.socket");
+
+  bind(mListenSocket, (struct sockaddr*)&addr, sizeof(addr));
+  if (mListenSocket < 0) {
+    perror("Bind Error: ");
+    exit(-1);
+  }
+
+  res = listen(mListenSocket, 1);
+  if (res < 0) {
+    perror("Listen Error: ");
+    exit(-1);
+  }
+
+  mDomainSocket = accept(mListenSocket, NULL, NULL);
+  if (mDomainSocket < 0) {
+    perror("Accept Error: ");
+    exit(-1);
+  }
+}
+
+void ShimSerial::connectDomainSocket() {
+  int res;
+
+  mDomainSocket = socket(AF_UNIX, SOCK_STREAM, 0);
+  if (mDomainSocket < 0) {
+    perror("Socket Error: ");
+    exit(-1);
+  }
+
+  struct sockaddr_un addr;
+  memset(&addr, 0, sizeof(addr));
+  addr.sun_family = AF_UNIX;
+  strncpy(addr.sun_path, "SDI12.socket", sizeof(addr.sun_path)-1);
+
+  res = connect(mDomainSocket, (struct sockaddr*)&addr, sizeof(addr));
+  if (res < 0) {
+    perror("Connect Error: ");
+    exit(-1);
+  }
+}
+
+void ShimSerial::disconnectDomainSocket() {
+  close(mDomainSocket);
+  if (mListenSocket > -1) {
+    close(mListenSocket);
+  }
 }
 
 void ShimSerial::begin(int baud, int type) {
@@ -65,21 +138,35 @@ void ShimSerial::end() {
 }
 
 void ShimSerial::write(char chr) {
-  printf("Serial1.write: %c\n", chr);
+  cout << "Serial1.write: " << chr << endl;
+
+  send(mDomainSocket, &chr, sizeof(char), 0);
 }
 void ShimSerial::write(char* str) {
-  printf("Serial1.write: %s\n", str);
+  cout << "Serial1.write: " << str << endl;
+
+  send(mDomainSocket, str, strlen(str)*sizeof(char), 0);
 }
 
 int ShimSerial::available() {
-  return mBufferIndex > 0;
+  int count;
+  int res = ioctl(mDomainSocket, FIONREAD, &count);
+  if (res < 0) {
+    perror("IOCTL Error: ");
+    exit(-1);
+  }
+
+  return count > 0;
 }
 char ShimSerial::read() {
+  char out;
   if (this->available()) {
-    return mBuffer[mBufferIndex--];
+    recv(mDomainSocket, &out, sizeof(char), 0);
+    cout << "Serial1.read: " << out << endl;
+    return out;
   } else {
-    cout << "ERR: Buffer Overflow!\n" << endl;
-    return '\0';
+    cout << "Serial1.read: (NO DATA)" << endl;
+    return '\255';
   }
 }
 
