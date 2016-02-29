@@ -71,7 +71,7 @@ void SDIBusController::sendPreamble() {
     digitalWrite(mFlowControlPin, 0);
     delayMicroseconds(12000); // wait for 12 ms
     digitalWrite(mFlowControlPin, 1);
-    delayMicroseconds(8300); // wait for 8.3 ms
+    delayMicroseconds(8330); // wait for 8.33 ms
 
     // re-enable Serial1
     Serial1.begin(1200, SERIAL_7E1);
@@ -140,25 +140,38 @@ int SDIBusController::acknowledgeActive(char addr) {
   Serial1.write(addr);
   Serial1.write('!');
 
-  // TODO(colby): add direction control
+  setBufferRead();
 
   // TODO(colby): add timeout handling
-  while(!Serial1.available()); delay(1);
-  char c0 = Serial1.read();
-  while(!Serial1.available()); delay(1);
-  char c1 = Serial1.read();
-  while(!Serial1.available()); delay(1);
-  char c2 = Serial1.read();
-
-  if (c0 != addr || c1 != '\r' || c2 != '\n') {
-    cout << "Failure" << endl;
-    SDIBusErrno = RESPONSE_ERROR;
-    return -1;
+  char res[3];
+  // expected: sensor addr, <CR>, <LF>
+  char exp[3] = {addr, '\r', '\n'};
+  
+  int numDelays = 0;
+  while( Serial1.available() < 3){
+      if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
+          // TIME OUT - set error variable
+          SDIBusErrno = TIMEOUT;
+          cout << "Failure" << endl;
+          return -1;
+      }
+      delay(1);
   }
+
+  // sequentially compare each byte to expected
+  for(int i=0; i<3; i++){
+      if( Serial1.read() != exp[i] ){
+          // incorrect response - set error variable
+          SDIBusErrno = RESPONSE_ERROR;
+          cout << "Failure" << endl;
+          return -1;
+      }
+  }
+
   cout << "Success" << endl;
 
   SDIBusErrno = OK;
-  return 0; // we made it
+  return 0;
 }
 
 int SDIBusController::refresh(char addr, int altno) {

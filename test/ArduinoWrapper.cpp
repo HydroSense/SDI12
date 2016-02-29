@@ -164,7 +164,8 @@ int ShimSerial::available() {
     exit(-1);
   }
 
-  return count > 0;
+//  return count > 0;
+  return count;
 }
 char ShimSerial::read() {
   char out;
