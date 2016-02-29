@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 
 #include <stdlib.h>
 #include <time.h>
@@ -44,6 +45,7 @@ void delayMicroseconds(int usec) {
   tim.tv_nsec = 100L*1000L * (long)usec;
   nanosleep(&tim, NULL);
 }
+
 void delay(int msec) {
   cout << "Delay: " << msec << " ms" << endl;
 
@@ -51,6 +53,12 @@ void delay(int msec) {
   tim.tv_sec = 0;
   tim.tv_nsec = 100L*1000L*1000L * (long)msec;
   nanosleep(&tim, NULL);
+}
+
+unsigned long millis() {
+    struct timeval tp;
+    gettimeofday(&tp, NULL);
+    return tp.tv_sec * 1000 + tp.tv_usec / 1000;
 }
 
 ShimSerial::ShimSerial() {

@@ -11,6 +11,7 @@ void digitalWrite(int pin, int isHigh);
 
 void delayMicroseconds(int usec);
 void delay(int msec);
+unsigned long millis();
 
 #define SHIM_SERIAL_BUFFER_SIZE 4096
 class ShimSerial {
@@ -36,6 +37,7 @@ public:
 
   int available();
   char read();
+
 };
 
 extern ShimSerial Serial1;

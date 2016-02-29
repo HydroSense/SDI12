@@ -1,4 +1,4 @@
-#if 0
+#ifndef __SDI_REMOTE_SENSOR_CPP
 #define __SDI_REMOTE_SENSOR_CPP
 
 
@@ -41,9 +41,10 @@ int SDIRemoteSensor::refresh(int altno) {
     return timeToWait;
   }
 
-  mReadyTimestamp = 1000*timeToWait + getMillis();
+  mReadyTimestamp = 1000*timeToWait + millis();
   mBusy = 1;
-  return status;
+//  return status;
+    return 0; //?
 }
 
 const float* SDIRemoteSensor::values() {
@@ -51,7 +52,7 @@ const float* SDIRemoteSensor::values() {
   return (const float*)mValues;
 }
 
-float SDIRemoteSensor::value(int index) {
+const float SDIRemoteSensor::value(int index) {
   if (index > 9) {
     return nan("");
   }

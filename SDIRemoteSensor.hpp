@@ -1,4 +1,4 @@
-#if 0
+#ifndef __SDI_REMOTE_SENSOR_HPP
 #define __SDI_REMOTE_SENSOR_HPP
 
 #include "SDIBusController.hpp"
@@ -10,7 +10,7 @@ private:
 
   int mAvailable;
   int mBusy;
-  float[10] mValues;
+  float mValues[10];
 
 public:
   SDIRemoteSensor(char addr);
