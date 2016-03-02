@@ -22,8 +22,6 @@ int main(int argc, char** argv) {
   int res = SDIBus.acknowledgeActive('0');
   if (res < 0) {
     cout << "ERR: " << SDIBusErrno << endl;
-  }else{
-    cout << "Success!" << endl;
   }
 
   //send identification test...
@@ -31,14 +29,10 @@ int main(int argc, char** argv) {
   // res = SDIBus.changeAddress('1');
   // if (res < 0) {
   //     cout << "ERR: " << SDIBusErrno << endl;
-  // }else{
-  //     cout << "Success!" << endl;
   // }
 
   res = SDIBus.addressQuery(&addrPtr);
   if (res < 0) {
       cout << "ERR: " << SDIBusErrno << endl;
-  }else{
-      cout << "Success!" << endl;
   }
 }
