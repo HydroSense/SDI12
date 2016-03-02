@@ -214,8 +214,8 @@ int SDIBusController::refresh(char addr, int altno, int *waitTime, int *numMeas)
       meas[i] = Serial1.read();
   }
 
-  Serial1.read*(); Serial1.read(); // <CR><LF>
-  
+  Serial1.read(); Serial1.read(); // <CR><LF>
+
   *waitTime = 100*((int) (time[0] - '0')) + 10*((int) (time[1] - '0')) + ((int) (time[2] - '0'));
   *numMeas = 10*((int) (meas[1] - '0')) + ((int) (meas[0] - '0'));
 
