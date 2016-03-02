@@ -53,8 +53,6 @@ int main(int argc, char** argv) {
   }
 
   cout << "-- Testing changeAddress 1 --" << endl;
-  int waitTime;
-  int numMeasurements;
   res = SDIBus.refresh('0', 1, &waitTime, &numMeasurements);
   if (res < 0) {
       cout << "ERR: " << SDIBusErrno << endl;
