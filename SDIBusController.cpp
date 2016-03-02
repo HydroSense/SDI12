@@ -178,7 +178,7 @@ int SDIBusController::acknowledgeActive(char addr) {
   cout << "Success" << endl;
 
   SDIBusErrno = OK;
-  return 0;
+ return 0;
 }
 
 int SDIBusController::refresh(char addr, int altno) {
@@ -190,7 +190,44 @@ int SDIBusController::getData(char addr, float* buffer) {
 }
 
 int SDIBusController::changeAddress(char oldAddr, char newAddr) {
-  return -1;
+  sendPreamble();
+
+  // write data out the serial
+  Serial1.write(addr);
+  Serial1.write('A');
+  Serial1.write(newAddr);
+  Serial1.write('!');
+
+  setBufferRead();
+
+  // expected: new sensor addr, <CR>, <LF>
+  char exp[3] = {newAddr, '\r', '\n'};
+
+  int numDelays = 0;
+  while( Serial1.available() < 3){
+      if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
+          // TIME OUT - set error variable
+          SDIBusErrno = TIMEOUT;
+          cout << "Failure - timeout" << endl;
+          return -1;
+      }
+      delay(1);
+  }
+
+  // sequentially compare each byte to expected
+  for(int i=0; i<3; i++){
+      if( Serial1.read() != exp[i] ){
+          // incorrect response - set error variable
+          SDIBusErrno = RESPONSE_ERROR;
+          cout << "Failure - response error" << endl;
+          return -1;
+      }
+  }
+
+  cout << "Success" << endl;
+
+  SDIBusErrno = OK;
+  return 0;
 }
 
 int SDIBusController::respondToAcknowledgeActive(char addr) {
