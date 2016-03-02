@@ -118,12 +118,13 @@ int SDIBusController::addressQuery(char *outAddr) {
   
   int numDelays = 0;
   while( Serial1.available() < 3){
-      if( ++numdelays == SDI_MAX_RESPONSE_TIME ){
+      if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
           // TIME OUT
           SDIBusErrno = TIMEOUT;
           cout << "Failure - no device detected" << endl;
           return -1;
       }
+      delay(1);
   }
   char newAddr = Serial1.read();
   for(int i=0; i<2; i++){
@@ -201,7 +202,7 @@ int SDIBusController::respondToAcknowledgeActive(char addr) {
   return 0;
 }
 
-int SDIBusController:respondToAddressQuery(char addr){
+int SDIBusController::respondToAddressQuery(char addr){
     Serial1.write(addr);
     Serial1.write('\r');
     Serial1.write('\n');

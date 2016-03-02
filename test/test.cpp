@@ -9,7 +9,6 @@ using namespace std;
 #define FLOW_CONTROL_PIN 13
 
 int main(int argc, char** argv) {
-  char addrPtr;
 
   cout << "Started test..." << endl;
 
@@ -19,6 +18,7 @@ int main(int argc, char** argv) {
 
   SDIBus.begin(FLOW_CONTROL_PIN, 0);
 
+  cout << "-- Testing acknowledgeActive --" << endl;
   int res = SDIBus.acknowledgeActive('0');
   if (res < 0) {
     cout << "ERR: " << SDIBusErrno << endl;
@@ -35,6 +35,8 @@ int main(int argc, char** argv) {
   //     cout << "Success!" << endl;
   // }
 
+  cout << "-- Testing addressQuery --" << endl;
+  char addrPtr;
   res = SDIBus.addressQuery(&addrPtr);
   if (res < 0) {
       cout << "ERR: " << SDIBusErrno << endl;
