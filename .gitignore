@@ -9,3 +9,5 @@
 
 # Ignore all obj
 *.o
+build/
+
