@@ -47,7 +47,7 @@ public:
 //  int register(SDIRemoteSensor& sensor);
 //  void eventLoop(void);
 
-  int addressQuery(char* outAddr);
+  int addressQuery(char *outAddr); // Use when there is only 1 sensor connected
   int acknowledgeActive(char addr);
   int identify(char addr, SDIDeviceInfo* devInfo);
 

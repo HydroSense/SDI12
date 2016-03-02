@@ -106,31 +106,39 @@ void SDIBusController::eventLoop() {
 }
 */
 
-int SDIBusController::addressQuery(char* outAddr) {
+int SDIBusController::addressQuery(char *outAddr) {
   sendPreamble();
 
   Serial1.write('?');
   Serial1.write('!');
+  setBufferRead();
 
-  // TODO(colby): same as below
-  while(!Serial1.available()); delay(1);
-  char c0 = Serial1.read();
-  while(!Serial1.available()); delay(1);
-  char c1 = Serial1.read();
-  while(!Serial1.available()); delay(1);
-  char c2 = Serial1.read();
-
-  if (c1 != '\r' || c2 != '\n') {
-    cout << "Failure" << endl;
-    SDIBusErrno = RESPONSE_ERROR;
-    return -1;
+  // expected: addr, <CR>, <LF>
+  char exp[2] = {'\r', '\n'};
+  
+  int numDelays = 0;
+  while( Serial1.available() < 3){
+      if( ++numdelays == SDI_MAX_RESPONSE_TIME ){
+          // TIME OUT
+          SDIBusErrno = TIMEOUT;
+          cout << "Failure - no device detected" << endl;
+          return -1;
+      }
+  }
+  char newAddr = Serial1.read();
+  for(int i=0; i<2; i++){
+      if(Serial1.read() != exp[i]){
+          cout << "Failure" << endl;
+          SDIBusErrno = RESPONSE_ERROR;
+          return -1;
+      }
   }
 
-  *outAddr = c0;
+  *outAddr = newAddr; // write new address
   cout << "Success" << endl;
 
   SDIBusErrno = OK;
-  return 0; // we made it
+  return 0;
 }
 
 int SDIBusController::acknowledgeActive(char addr) {
@@ -142,8 +150,6 @@ int SDIBusController::acknowledgeActive(char addr) {
 
   setBufferRead();
 
-  // TODO(colby): add timeout handling
-  char res[3];
   // expected: sensor addr, <CR>, <LF>
   char exp[3] = {addr, '\r', '\n'};
   
