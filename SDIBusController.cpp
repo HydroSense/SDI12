@@ -222,4 +222,18 @@ int SDIBusController::respondToAddressQuery(char addr){
   return 0;
 }
 
+int SDIBusController::respondToRefresh(char addr, int altno){
+  Serial1.write(addr);
+
+  Serial1.write('1');
+  Serial1.write('2');
+  Serial1.write('3');
+
+  Serial1.write('4');
+  Serial1.write('5');
+
+  SDIBusErrno = OK;
+  return 0;
+}
+
 #endif

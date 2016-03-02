@@ -37,12 +37,23 @@ int main(int argc, char** argv) {
       if (strcmp(buffer, "0!") == 0) {
         cout << "Responding..." << endl;
         SDIBus.respondToAcknowledgeActive('0');
+
       } else if (strcmp(buffer, "?!") == 0) {
         cout << "Responding..." << endl;
         SDIBus.respondToAddressQuery('0');
+
       } else if (strcmp(buffer, "0A1!") == 0) {
         cout << "Responding..." << endl;
         SDIBus.respondToAddressQuery('1');
+
+      } else if (strcmp(buffer, "0C0!") == 0) {
+        cout << "Responding..." << endl;
+        SDIBus.respondToRefresh('0', 0);
+
+      } else if (strcmp(buffer, "0C1!") == 0) {
+        cout << "Responding..." << endl;
+        SDIBus.respondToRefresh('0', 1);
+
       } else {
         cout << "IDK what that was, quitting" << endl;
       }

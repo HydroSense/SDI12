@@ -58,6 +58,7 @@ public:
   int respondToAcknowledgeActive(char addr);
   int respondToChangeAddress(char addr);
   int respondToAddressQuery(char addr);
+  int respondToRefresh(char addr, int altno);
 };
 
 // singleton declaration
