@@ -51,7 +51,7 @@ public:
   int acknowledgeActive(char addr);
   int identify(char addr, SDIDeviceInfo* devInfo);
 
-  int refresh(char addr, int altno);
+  int refresh(char addr, int altno, int *waitTime, int *numMeas);
   int getData(char addr, float* buffer);
   int changeAddress(char oldAddr, char newAddr);
 

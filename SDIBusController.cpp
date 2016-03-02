@@ -181,8 +181,46 @@ int SDIBusController::acknowledgeActive(char addr) {
  return 0;
 }
 
-int SDIBusController::refresh(char addr, int altno) {
-  return -1;
+int SDIBusController::refresh(char addr, int altno, int *waitTime, int *numMeas) {
+  sendPreamble();
+
+  Serial1.write(addr);
+  Serial1.write('C');
+  if(altno > 0 && altno < 10){
+      Serial1.write(itoa(altno));
+  }
+  Serial1.write('!');
+  setBufferRead();
+
+  // expected: atttnn<CR><LF>
+
+  int numDelays = 0;
+  while( Serial1.available() < 8){
+      if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
+          // TIME OUT
+          SDIBusErrno = TIMEOUT;
+          cout << "Failure - no device detected" << endl;
+          return -1;
+      }
+      delay(1);
+  }
+  Serial1.read(); // address
+
+  char time[3], meas[2];
+  for(int i=0; i<3; i++){
+      time[i] = Serial1.read();
+  }
+  for(int i=0; i<2; i++){
+      meas[i] = Serial1.read();
+  }
+  
+  *waitTime = 100*atoi(time[0]) + 10*atoi(time[1]) + atoi(time[2]);
+  *numMeas = 10*atoi(meas[1]) + atoi(meas[0]);
+
+  cout << "Success" << endl;
+
+  SDIBusErrno = OK;
+  return 0;
 }
 
 int SDIBusController::getData(char addr, float* buffer) {
@@ -193,7 +231,7 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
   sendPreamble();
 
   // write data out the serial
-  Serial1.write(addr);
+  Serial1.write(oldAddr);
   Serial1.write('A');
   Serial1.write(newAddr);
   Serial1.write('!');
