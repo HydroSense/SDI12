@@ -9,6 +9,8 @@ using namespace std;
 #define FLOW_CONTROL_PIN 13
 
 int main(int argc, char** argv) {
+  char addrPtr;
+
   cout << "Started test..." << endl;
 
   cout << "connecting to domain socket...";
@@ -20,5 +22,23 @@ int main(int argc, char** argv) {
   int res = SDIBus.acknowledgeActive('0');
   if (res < 0) {
     cout << "ERR: " << SDIBusErrno << endl;
+  }else{
+    cout << "Success!" << endl;
+  }
+
+  //send identification test...
+
+  // res = SDIBus.changeAddress('1');
+  // if (res < 0) {
+  //     cout << "ERR: " << SDIBusErrno << endl;
+  // }else{
+  //     cout << "Success!" << endl;
+  // }
+
+  res = SDIBus.addressQuery(&addrPtr);
+  if (res < 0) {
+      cout << "ERR: " << SDIBusErrno << endl;
+  }else{
+      cout << "Success!" << endl;
   }
 }
