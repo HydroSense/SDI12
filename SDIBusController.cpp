@@ -124,6 +124,7 @@ int SDIBusController::addressQuery(char *outAddr) {
           cout << "Failure - no device detected" << endl;
           return -1;
       }
+      delay(1);
   }
   char newAddr = Serial1.read();
   for(int i=0; i<2; i++){
@@ -202,6 +203,7 @@ int SDIBusController::respondToAcknowledgeActive(char addr) {
 }
 
 int SDIBusController::respondToAddressQuery(char addr){
+
   Serial1.write(addr);
   Serial1.write('\r');
   Serial1.write('\n');

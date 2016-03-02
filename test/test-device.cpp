@@ -16,31 +16,33 @@ int main(int argc, char** argv) {
   Serial1.serveDomainSocket();
   SDIBus.begin(0, 1);
 
-  // wait for a command
-  char buffer[BUFFER_SIZE] = {'\0'};
-  char inChar = '\0';
+  while(1){
+      // wait for a command
+      char buffer[BUFFER_SIZE] = {'\0'};
+      char inChar = '\0';
 
-  for (int i=0; inChar != '!'; i++) {
-    // wait for a character
-    while(!Serial1.available()) {
-      delay(1);
-    }
+      for (int i=0; inChar != '!'; i++) {
+        // wait for a character
+        while(!Serial1.available()) {
+          delay(1);
+        }
 
-    // save away
-    inChar = Serial1.read();
-    buffer[i] = inChar;
-  }
+        // save away
+        inChar = Serial1.read();
+        buffer[i] = inChar;
+      }
 
-  cout << "BUFFER: " << buffer << endl;
+      cout << "BUFFER: " << buffer << endl;
 
-  if (strcmp(buffer, "0!") == 0) {
-    cout << "Responding..." << endl;
-    SDIBus.respondToAcknowledgeActive('0');
-  }else if (strcmp(buffer, "?!")) {
-    cout << "Responding..." << endl;
-    SDIBus.respondToAddressQuery('0');
-  } else {
-    cout << "IDK what that was, quitting" << endl;
+      if (strcmp(buffer, "0!") == 0) {
+        cout << "Responding..." << endl;
+        SDIBus.respondToAcknowledgeActive('0');
+      }else if (strcmp(buffer, "?!") == 0) {
+        cout << "Responding..." << endl;
+        SDIBus.respondToAddressQuery('0');
+      } else {
+        cout << "IDK what that was, quitting" << endl;
+      }
   }
 
   cout << "Quitting in 10 seconds..." << endl;
