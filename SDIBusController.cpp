@@ -152,7 +152,7 @@ int SDIBusController::acknowledgeActive(char addr) {
 
   // expected: sensor addr, <CR>, <LF>
   char exp[3] = {addr, '\r', '\n'};
-  
+
   int numDelays = 0;
   while( Serial1.available() < 3){
       if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
@@ -199,6 +199,15 @@ int SDIBusController::respondToAcknowledgeActive(char addr) {
 
   SDIBusErrno = OK;
   return 0;
+}
+
+int SDIBusController:respondToAddressQuery(char addr){
+    Serial1.write(addr);
+    Serial1.write('\r');
+    Serial1.write('\n');
+
+    SDIBusErrno = OK;
+    return 0;
 }
 
 #endif

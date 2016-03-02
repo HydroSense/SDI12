@@ -36,6 +36,9 @@ int main(int argc, char** argv) {
   if (strcmp(buffer, "0!") == 0) {
     cout << "Responding..." << endl;
     SDIBus.respondToAcknowledgeActive('0');
+  }else if (strcmp(buffer, "?!")) {
+    cout << "Responding..." << endl;
+    SDIBus.respondToAddressQuery('0');
   } else {
     cout << "IDK what that was, quitting" << endl;
   }
