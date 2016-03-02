@@ -105,7 +105,7 @@ void ShimSerial::serveDomainSocket() {
   }
 }
 
-void ShimSerial::connectDomainSocket() {
+int ShimSerial::connectDomainSocket() {
   int res;
 
   mDomainSocket = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -122,15 +122,19 @@ void ShimSerial::connectDomainSocket() {
   res = connect(mDomainSocket, (struct sockaddr*)&addr, sizeof(addr));
   if (res < 0) {
     perror("Connect Error: ");
-    exit(-1);
+    return -1;
   }
+
+  return 0;
 }
 
-void ShimSerial::disconnectDomainSocket() {
+int ShimSerial::disconnectDomainSocket() {
   close(mDomainSocket);
   if (mListenSocket > -1) {
     close(mListenSocket);
   }
+
+  return 0;
 }
 
 void ShimSerial::begin(int baud, int type) {

@@ -26,8 +26,8 @@ private:
 public:
   ShimSerial();
   void serveDomainSocket();
-  void connectDomainSocket();
-  void disconnectDomainSocket();
+  int connectDomainSocket();
+  int disconnectDomainSocket();
 
   void begin(int baud, int type);
   void end();

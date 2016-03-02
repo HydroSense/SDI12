@@ -8,6 +8,23 @@ using namespace std;
 
 #define FLOW_CONTROL_PIN 13
 
+#include <gtest/gtest.h>
+
+class FooTest: public ::testing::Test {
+public:
+  FooTest() {
+
+  }
+};
+
+TEST_F(FooTest, MethodBarDoesABC) {
+  //int res = Serial1.connectDomainSocket();
+  int res = 0;
+
+  EXPECT_EQ(0, res);
+}
+
+/*
 int main(int argc, char** argv) {
 
   cout << "Started test..." << endl;
@@ -58,3 +75,5 @@ int main(int argc, char** argv) {
       cout << "ERR: " << SDIBusErrno << endl;
   }
 }
+
+*/
