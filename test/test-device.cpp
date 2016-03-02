@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
         cout << "Responding..." << endl;
         SDIBus.respondToAddressQuery('1');
 
-      } else if (strcmp(buffer, "0C0!") == 0) {
+      } else if (strcmp(buffer, "0C!") == 0) {
         cout << "Responding..." << endl;
         SDIBus.respondToRefresh('0', 0);
 

@@ -36,7 +36,9 @@ int SDIRemoteSensor::refresh() {
   return this->refresh(0);
 }
 int SDIRemoteSensor::refresh(int altno) {
-  int timeToWait = SDIBus.refresh(mAddr, altno);
+    int timeToWait;
+    int numMeasurements;
+  int response = SDIBus.refresh(mAddr, altno, &timeToWait, &numMeasurements);
   if (timeToWait < 0) {
     return timeToWait;
   }

@@ -187,7 +187,7 @@ int SDIBusController::refresh(char addr, int altno, int *waitTime, int *numMeas)
   Serial1.write(addr);
   Serial1.write('C');
   if(altno > 0 && altno < 10){
-      Serial1.write(itoa(altno));
+      Serial1.write((char) (altno + '0'));
   }
   Serial1.write('!');
   setBufferRead();
@@ -213,9 +213,11 @@ int SDIBusController::refresh(char addr, int altno, int *waitTime, int *numMeas)
   for(int i=0; i<2; i++){
       meas[i] = Serial1.read();
   }
+
+  Serial1.read*(); Serial1.read(); // <CR><LF>
   
-  *waitTime = 100*atoi(time[0]) + 10*atoi(time[1]) + atoi(time[2]);
-  *numMeas = 10*atoi(meas[1]) + atoi(meas[0]);
+  *waitTime = 100*((int) (time[0] - '0')) + 10*((int) (time[1] - '0')) + ((int) (time[2] - '0'));
+  *numMeas = 10*((int) (meas[1] - '0')) + ((int) (meas[0] - '0'));
 
   cout << "Success" << endl;
 
@@ -306,6 +308,9 @@ int SDIBusController::respondToRefresh(char addr, int altno){
 
   Serial1.write('4');
   Serial1.write('5');
+
+  Serial1.write('\r');
+  Serial1.write('\n');
 
   SDIBusErrno = OK;
   return 0;
