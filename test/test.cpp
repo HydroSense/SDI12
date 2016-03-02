@@ -31,6 +31,12 @@ int main(int argc, char** argv) {
   //     cout << "ERR: " << SDIBusErrno << endl;
   // }
 
+  cout << "-- Testing changeAddress --" << endl;
+  res = SDIBus.changeAddress('0', '1');
+  if (res < 0) {
+      cout << "ERR: " << SDIBusErrno << endl;
+  }
+
   cout << "-- Testing addressQuery --" << endl;
   char addrPtr;
   res = SDIBus.addressQuery(&addrPtr);

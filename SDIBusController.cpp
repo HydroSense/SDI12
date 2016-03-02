@@ -239,8 +239,18 @@ int SDIBusController::respondToAcknowledgeActive(char addr) {
   return 0;
 }
 
-int SDIBusController::respondToAddressQuery(char addr){
+//respond to send identification
 
+int SDIBusController::respondToChangeAddress(char addr){
+  Serial1.write(addr);
+  Serial1.write('\r');
+  Serial1.write('\n');
+
+  SDIBusErrno = OK;
+  return 0;
+}
+
+int SDIBusController::respondToAddressQuery(char addr){
   Serial1.write(addr);
   Serial1.write('\r');
   Serial1.write('\n');

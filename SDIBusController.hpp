@@ -56,6 +56,7 @@ public:
   int changeAddress(char oldAddr, char newAddr);
 
   int respondToAcknowledgeActive(char addr);
+  int respondToChangeAddress(char addr);
   int respondToAddressQuery(char addr);
 };
 
