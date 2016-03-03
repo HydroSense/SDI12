@@ -1,45 +1,53 @@
 #ifndef __ARDUINO_H
 #define __ARDUINO_H
 
+#include <exception>
+using namespace std;
+
 #define INPUT 1
 #define OUTPUT 0
 
-#define SERIAL_7E1 0
+#define ARDUINO_NUM_PINS 32
+
+enum PinState {
+  IN=1,
+  OUT=0,
+  PIN_STATE_UNDEF
+};
+enum SignalState {
+  HI=1,
+  LO=0,
+  SIGNAL_STATE_UNDEF
+};
+
+// for invalid pin modes
+class PinModeException : public exception {
+  virtual const char* what() const throw() {
+    return "ERR: Invalid pin mode";
+  }
+};
 
 void pinMode(int pin, int isInput);
 void digitalWrite(int pin, int isHigh);
 
-void delayMicroseconds(int usec);
+void delayMicroseconds(long usec);
 void delay(int msec);
 unsigned long millis();
 
-#define SHIM_SERIAL_BUFFER_SIZE 4096
-class ShimSerial {
-private:
-  bool mActive;
-  int mListenSocket;
-  int mDomainSocket;
-
-  int mType;
-  int mBaud;
-
+struct ArduinoEnvironment {
 public:
-  ShimSerial();
-  void serveDomainSocket();
-  int connectDomainSocket();
-  int disconnectDomainSocket();
 
-  void begin(int baud, int type);
-  void end();
+  long timeUsec;
+  PinState pinTristates[ARDUINO_NUM_PINS];
+  SignalState pinSignalStates[ARDUINO_NUM_PINS];
 
-  void write(char chr);
-  void write(char* str);
+  ArduinoEnvironment();
 
-  int available();
-  char read();
-
+  void reset();
 };
 
-extern ShimSerial Serial1;
+extern ArduinoEnvironment Environment;
+
+
 
 #endif
