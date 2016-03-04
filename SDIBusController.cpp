@@ -248,7 +248,6 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
 }
 
 int SDIBusController::getData(char addr, float* buffer, int numExpected) {
-    return -1;
   if (!this->isValidAddress(addr)) {
     SDIBusErrno = BAD_ADDRESS;
     return -1;
