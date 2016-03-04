@@ -117,6 +117,10 @@ SerialType FakeSerial::getSerialType() {
   return mSerialType;
 }
 
+int FakeSerial::getBaudRate() {
+  return mBaud;
+}
+
 
 void FakeSerial::begin(int baud, SerialType type) {
   mBaud = baud;

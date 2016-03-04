@@ -37,6 +37,7 @@ public:
   const string& getOutputHistory();
   void clearOutputHistory();
   SerialType getSerialType();
+  int getBaudRate();
 
 
   // Arduino compatable API

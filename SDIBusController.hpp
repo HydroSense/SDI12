@@ -38,10 +38,11 @@ private:
   void setBufferRead();
 
   // private constructor
-  public:SDIBusController();
 
 public:
-  void begin(int flowControlPin, unsigned int maxSensors);
+  SDIBusController(int flowControlPin, unsigned int maxSensors);
+
+  void begin(void);
   void end(void);
 
 //  int register(SDIRemoteSensor& sensor);
@@ -52,7 +53,7 @@ public:
   int identify(char addr, SDIDeviceInfo* devInfo);
 
   int refresh(char addr, int altno, int *waitTime, int *numMeas);
-  int getData(char addr, float* buffer);
+  int getData(char addr, float* buffer, int numExpected);
   int changeAddress(char oldAddr, char newAddr);
 
   int respondToAcknowledgeActive(char addr);
@@ -60,8 +61,5 @@ public:
   int respondToAddressQuery(char addr);
   int respondToRefresh(char addr, int altno);
 };
-
-// singleton declaration
-extern SDIBusController SDIBus;
 
 #endif

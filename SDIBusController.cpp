@@ -11,33 +11,25 @@ using namespace std;
 #include "SDIBusController.hpp"
 #include "SDIRemoteSensor.hpp"
 
-// define the singleton insance of this, will not allow anyone else to declare
-// an instance of the sensor
-SDIBusController SDIBus;
 SDIBusError SDIBusErrno;
 
 /* Private Members */
-SDIBusController::SDIBusController() {
-  mMaxSensorCount = 0;
-  mSensorCount = 0;
-  mFlowControlPin = -1;
-}
-
-/* Public Members */
-void SDIBusController::begin(int flowControlPin, unsigned int maxSensors) {
+SDIBusController::SDIBusController(int flowControlPin, unsigned int maxSensors) {
   mFlowControlPin = flowControlPin;
   mMaxSensorCount = maxSensors;
   mSensorCount = 0;
 
   // allocate memory for the sensors
- // mSensors = calloc(mMaxSensors, sizeof(SDIRemoteSensor*));
+  // mSensors = calloc(mMaxSensors, sizeof(SDIRemoteSensor*));
+}
 
+/* Public Members */
+void SDIBusController::begin() {
     pinMode(mFlowControlPin, OUTPUT);
     Serial1.begin(1200, SERIAL_7E1);
 }
 
 void SDIBusController::end(void) {
-
     Serial1.end();
     digitalWrite(mFlowControlPin, 1); // buffer is receiving
 }
@@ -181,51 +173,11 @@ int SDIBusController::acknowledgeActive(char addr) {
  return 0;
 }
 
-int SDIBusController::refresh(char addr, int altno, int *waitTime, int *numMeas) {
-  sendPreamble();
-
-  Serial1.write(addr);
-  Serial1.write('C');
-  if(altno > 0 && altno < 10){
-      Serial1.write((char) (altno + '0'));
-  }
-  Serial1.write('!');
-  setBufferRead();
-
-  // expected: atttnn<CR><LF>
-
-  int numDelays = 0;
-  while( Serial1.available() < 8){
-      if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
-          // TIME OUT
-          SDIBusErrno = TIMEOUT;
-          cout << "Failure - no device detected" << endl;
-          return -1;
-      }
-      delay(1);
-  }
-  Serial1.read(); // address
-
-  char time[3], meas[2];
-  for(int i=0; i<3; i++){
-      time[i] = Serial1.read();
-  }
-  for(int i=0; i<2; i++){
-      meas[i] = Serial1.read();
-  }
-
-  Serial1.read(); Serial1.read(); // <CR><LF>
-
-  *waitTime = 100*((int) (time[0] - '0')) + 10*((int) (time[1] - '0')) + ((int) (time[2] - '0'));
-  *numMeas = 10*((int) (meas[1] - '0')) + ((int) (meas[0] - '0'));
-
-  cout << "Success" << endl;
-
-  SDIBusErrno = OK;
-  return 0;
+int SDIBusController::refresh(char addr, int altno, int* numExpected) {
+  return -1;
 }
 
-int SDIBusController::getData(char addr, float* buffer) {
+int SDIBusController::getData(char addr, float* buffer, int numExpected) {
   return -1;
 }
 

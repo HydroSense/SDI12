@@ -1,6 +1,9 @@
 #ifndef __ARDUINO_H
 #define __ARDUINO_H
 
+// pull in all other mock dependencies
+#include "FakeSerial.hpp"
+
 #include <exception>
 using namespace std;
 

@@ -15,12 +15,12 @@ file(GLOB mockSrc "./mock/*.cpp")
 
 file(GLOB testSources "tests/*.cpp")
 message("Tests: ${testSources}")
-foreach(source ${testSources})
-  get_filename_component(program ${source} NAME_WE)
+foreach(testSource ${testSources})
+  get_filename_component(program ${testSource} NAME_WE)
 
   message("Program Name: ${program}")
 
-  add_executable(${program} ${source} ${testSources} ${mockSrc})
+  add_executable(${program} ${sdiSrc} ${testSource} ${mockSrc})
   target_link_libraries(${program} ${GTEST_BOTH_LIBRARIES})
   add_test(TESTTESTTEST ${program})
 endforeach()
