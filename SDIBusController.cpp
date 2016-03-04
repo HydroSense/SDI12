@@ -111,11 +111,6 @@ void SDIBusController::eventLoop() {
 */
 
 int SDIBusController::addressQuery(char *outAddr) {
-  if (!this->isValidAddress(addr)) {
-    SDIBusErrno = BAD_ADDRESS;
-    return -1;
-  }
-
   sendPreamble();
 
   Serial1.write('?');
@@ -315,7 +310,7 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
 }
 
 int SDIBusController::changeAddress(char oldAddr, char newAddr) {
-  if (!this->isValidAddress(addr) || !this->isValidAddress(newAddr)) {
+  if (!this->isValidAddress(oldAddr) || !this->isValidAddress(newAddr)) {
     SDIBusErrno = BAD_ADDRESS;
     return -1;
   }
