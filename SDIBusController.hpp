@@ -17,10 +17,12 @@ enum SDIBusError {
 };
 extern SDIBusError SDIBusErrno;
 
-struct SDIDeviceInfo {
+struct SDIDeviceIdentification{
+  char addr[2];
+  char sdiVersion[3];
   char vendor[9];
-  char model[7];
-  char version[4];
+  char modelNum[7];
+  char sensorVersion[4];
   char optional[14];
 };
 
@@ -45,18 +47,25 @@ public:
   void begin(void);
   void end(void);
 
+
+
 //  int register(SDIRemoteSensor& sensor);
 //  void eventLoop(void);
 
   int addressQuery(char *outAddr); // Use when there is only 1 sensor connected
   int acknowledgeActive(char addr);
-  int identify(char addr, SDIDeviceInfo* devInfo);
+  int identify(char addr, struct SDIDeviceIdentification* devInfo);
 
   int refresh(char addr, int altno, int *waitTime, int *numExpected);
   int getData(char addr, float* buffer, int numExpected);
   int changeAddress(char oldAddr, char newAddr);
 
   int respondToAcknowledgeActive(char addr);
+
+  int respondToSendIdentificationNoOpt(char addr);
+  int respondToSendIdentificationPartialOpt(char addr);
+  int respondToSendIdentificationFullOpt(char addr);
+
   int respondToChangeAddress(char addr);
   int respondToAddressQuery(char addr);
   int respondToRefresh(char addr, int altno);

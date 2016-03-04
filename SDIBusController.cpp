@@ -173,6 +173,36 @@ int SDIBusController::acknowledgeActive(char addr) {
  return 0;
 }
 
+int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInfo){
+
+  char exp[22] = {addr, '1', '3', 'H', 'y', 'd', 'r', 'o', 'S', 'n', 's', };
+
+  sendPreamble();
+
+  Serial1.write(addr);
+  Serial1.write('I');
+  Serial1.write('!');
+
+  setBufferRead();
+
+  int numDelays  = 0;
+  while (Serial1.available() < 20) {
+    if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
+        // TIME OUT - set error variable
+        SDIBusErrno = TIMEOUT;
+        cout << "Failure" << endl;
+        return -1;
+    }
+  }
+
+  for(int i = 0; i < 20; i++){
+
+  }
+
+
+
+}
+
 int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpected) {
   return -1;
 }
@@ -217,52 +247,6 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
   }
 
   cout << "Success" << endl;
-
-  SDIBusErrno = OK;
-  return 0;
-}
-
-int SDIBusController::respondToAcknowledgeActive(char addr) {
-  Serial1.write(addr);
-  Serial1.write('\r');
-  Serial1.write('\n');
-
-  SDIBusErrno = OK;
-  return 0;
-}
-
-//respond to send identification
-
-int SDIBusController::respondToChangeAddress(char addr){
-  Serial1.write(addr);
-  Serial1.write('\r');
-  Serial1.write('\n');
-
-  SDIBusErrno = OK;
-  return 0;
-}
-
-int SDIBusController::respondToAddressQuery(char addr){
-  Serial1.write(addr);
-  Serial1.write('\r');
-  Serial1.write('\n');
-
-  SDIBusErrno = OK;
-  return 0;
-}
-
-int SDIBusController::respondToRefresh(char addr, int altno){
-  Serial1.write(addr);
-
-  Serial1.write('1');
-  Serial1.write('2');
-  Serial1.write('3');
-
-  Serial1.write('4');
-  Serial1.write('5');
-
-  Serial1.write('\r');
-  Serial1.write('\n');
 
   SDIBusErrno = OK;
   return 0;
