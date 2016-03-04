@@ -203,7 +203,7 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
   int numReceived = 0;
   char charBuffer[10] = {'\0'};
   int charBufferIndex;
-  for (char iChr='0'; numReceived <= numExpected && iChr <= '9'; iChr++) {
+  for (char iChr='0'; numReceived < numExpected && iChr <= '9'; iChr++) {
     Serial1.write(addr);
     Serial1.write('D');
     Serial1.write(iChr);
@@ -224,7 +224,7 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
 
     // keep reading in digits until we get a sign
     char chr = '\0';
-    while (chr != '\r') {
+    while (chr != '\n') {
       while (chr != '+' && chr != '-' && chr != '\r') {
         while(!Serial1.available());
         chr = Serial1.read();
@@ -232,11 +232,16 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
       }
       charBufferIndex--;          // decrement the counter becuase we saved the chr when we returned
 
+      // add the null terminator and then put through atoi
+      charBuffer[charBufferIndex] = '\0';
+      buffer[numReceived++] = atof(charBuffer);
+
       // go to the top of the loop
       if (chr == '\r') {
         // wait for the newline, if not newline then there is a bus error
         while(!Serial1.available());
-        if (Serial1.read() != '\n') {
+        chr = Serial1.read();
+        if (chr != '\n') {
           SDIBusErrno = RESPONSE_ERROR;
           return -1;
         }
@@ -244,13 +249,11 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
         continue;
       }
 
-      // add the null terminator and then put through atoi
-      charBuffer[charBufferIndex] = '\0';
-      buffer[numReceived++] = atof(charBuffer);
-
       // put the sign back in the beginning of the buffer
+      // blank out chr because it is used as a delimiter
       charBuffer[0] = chr;
       charBufferIndex = 1;
+      chr = '\0';
     }
   }
 }
