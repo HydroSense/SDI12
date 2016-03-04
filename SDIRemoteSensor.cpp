@@ -1,4 +1,5 @@
-#ifndef __SDI_REMOTE_SENSOR_CPP
+//#ifndef __SDI_REMOTE_SENSOR_CPP
+#if 0
 #define __SDI_REMOTE_SENSOR_CPP
 
 

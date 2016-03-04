@@ -173,7 +173,7 @@ int SDIBusController::acknowledgeActive(char addr) {
  return 0;
 }
 
-int SDIBusController::refresh(char addr, int altno, int* numExpected) {
+int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpected) {
   return -1;
 }
 

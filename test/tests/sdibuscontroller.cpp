@@ -83,30 +83,32 @@ TEST_F(SDIBusControllerTest, acknowledgeActiveBadAddress) {
 TEST_F(SDIBusControllerTest, refresh) {
   Serial1.addToInputBuffer("a00101\r\n");
 
-  int numExpected;
-  int res = sdiBusPtr->refresh('a', 0, &numExpected);
+  int waitTime; int numExpected;
+  int res = sdiBusPtr->refresh('a', 0, &waitTime, &numExpected);
   ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aC!");
+  ASSERT_EQ(waitTime, 1);
   ASSERT_EQ(numExpected, 1);
-  ASSERT_EQ(res, 1);
+  ASSERT_EQ(res, 0);
 }
 
 // alternative command
 TEST_F(SDIBusControllerTest, altRefresh) {
   Serial1.addToInputBuffer("a01002\r\n");
 
-  int numExpected;
-  int res = sdiBusPtr->refresh('a', 2, &numExpected);
+  int waitTime; int numExpected;
+  int res = sdiBusPtr->refresh('a', 2, &waitTime, &numExpected);
   ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aC2!");
+  ASSERT_EQ(waitTime, 10);
   ASSERT_EQ(numExpected, 2);
-  ASSERT_EQ(res, 10);
+  ASSERT_EQ(res, 0);
 }
 
 // instant refresh
 TEST_F(SDIBusControllerTest, instRefresh) {
   Serial1.addToInputBuffer("300001\r\n");
 
-  int numExpected;
-  int res = sdiBusPtr->refresh('3', 0, &numExpected);
+  int waitTime; int numExpected;
+  int res = sdiBusPtr->refresh('3', 0, &waitTime, &numExpected);
   ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "3C!");
   ASSERT_EQ(numExpected, 1);
   ASSERT_EQ(res, 0);
@@ -114,8 +116,8 @@ TEST_F(SDIBusControllerTest, instRefresh) {
 
 // ensures user cannot specify invalid addresses
 TEST_F(SDIBusControllerTest, refreshBadAddress) {
-  int numExpected;
-  int res = sdiBusPtr->refresh('\254', 0, &numExpected);
+  int waitTime; int numExpected;
+  int res = sdiBusPtr->refresh('\254', 0, &waitTime, &numExpected);
   ASSERT_NE(res, 0);
   ASSERT_EQ(SDIBusErrno, BAD_ADDRESS);
   ASSERT_EQ(Serial1.getOutputHistory().length(), 0);
