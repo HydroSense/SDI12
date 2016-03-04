@@ -77,6 +77,18 @@ void SDIBusController::setBufferRead(){
     digitalWrite(mFlowControlPin, 1);
 }
 
+bool SDIBusController::isValidAddress(char addr) {
+  if (addr <= '9' && addr >= '0') {
+    return true;
+  } else if (addr <= 'z' && addr >= 'a') {
+    return true;
+  } else if (addr <= 'Z' && addr >= 'A') {
+    return true;
+  }
+
+  return false;
+}
+
 /*
 void SDIBusController::eventLoop() {
   unsigned long currentTime = getMillis();
@@ -135,6 +147,11 @@ int SDIBusController::addressQuery(char *outAddr) {
 }
 
 int SDIBusController::acknowledgeActive(char addr) {
+  if (!this->isValidAddress(addr)) {
+    SDIBusErrno = BAD_ADDRESS;
+    return -1;
+  }
+
   sendPreamble();
 
   // write data out the serial
@@ -204,14 +221,132 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
 }
 
 int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpected) {
-  return -1;
+  if (!this->isValidAddress(addr)) {
+    SDIBusErrno = BAD_ADDRESS;
+    return -1;
+  }
+
+    sendPreamble();
+
+    Serial1.write(addr);
+    Serial1.write('C');
+    if(altno > 0 && altno < 10){
+       Serial1.write((char) (altno + '0'));
+    }
+    Serial1.write('!');
+    setBufferRead();
+
+    // expected: atttnn<CR><LF>
+
+    int numDelays = 0;
+    while( Serial1.available() < 8){
+       if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
+           // TIME OUT
+           SDIBusErrno = TIMEOUT;
+           cout << "Failure - no device detected" << endl;
+           return -1;
+       }
+       delay(1);
+    }
+    Serial1.read(); // address
+
+    char time[3], meas[2];
+    for(int i=0; i<3; i++){
+       time[i] = Serial1.read();
+    }
+    for(int i=0; i<2; i++){
+       meas[i] = Serial1.read();
+    }
+
+    // Last 2 characters: <CR><LF>
+    char exp[2] = {'\r', '\n'};
+    for(int i=0; i<2; i++){
+        if(Serial1.read() != exp[i]){
+            cout << "Failure" << endl;
+            SDIBusErrno = RESPONSE_ERROR;
+            return -1;
+        }
+    }
+
+    *waitTime = 100*((int) (time[0] - '0')) + 10*((int) (time[1] - '0')) + ((int) (time[2] - '0'));
+    *numExpected = 10*((int) (meas[0] - '0')) + ((int) (meas[1] - '0'));
+
+    cout << "Success" << endl;
+
+    SDIBusErrno = OK;
+    return 0;
 }
 
 int SDIBusController::getData(char addr, float* buffer, int numExpected) {
-  return -1;
+  if (!this->isValidAddress(addr)) {
+    SDIBusErrno = BAD_ADDRESS;
+    return -1;
+  }
+
+  int numReceived = 0;
+  char charBuffer[10] = {'\0'};
+  int charBufferIndex;
+  for (char iChr='0'; numReceived < numExpected && iChr <= '9'; iChr++) {
+    Serial1.write(addr);
+    Serial1.write('D');
+    Serial1.write(iChr);
+    Serial1.write('!');
+
+    // ensure the response address is correct
+    while(Serial1.available() < 1);
+    char responseAddress = Serial1.read();
+    if (responseAddress != addr) {
+      SDIBusErrno = RESPONSE_ERROR;
+      return -1;
+    }
+
+    // read the sign
+    charBufferIndex = 0;
+    while(!Serial1.available());
+    charBuffer[charBufferIndex++] = Serial1.read();
+
+    // keep reading in digits until we get a sign
+    char chr = '\0';
+    while (chr != '\n') {
+      while (chr != '+' && chr != '-' && chr != '\r') {
+        while(!Serial1.available());
+        chr = Serial1.read();
+        charBuffer[charBufferIndex++] = chr;
+      }
+      charBufferIndex--;          // decrement the counter becuase we saved the chr when we returned
+
+      // add the null terminator and then put through atoi
+      charBuffer[charBufferIndex] = '\0';
+      buffer[numReceived++] = atof(charBuffer);
+
+      // go to the top of the loop
+      if (chr == '\r') {
+        // wait for the newline, if not newline then there is a bus error
+        while(!Serial1.available());
+        chr = Serial1.read();
+        if (chr != '\n') {
+          SDIBusErrno = RESPONSE_ERROR;
+          return -1;
+        }
+
+        continue;
+      }
+
+      // put the sign back in the beginning of the buffer
+      // blank out chr because it is used as a delimiter
+      charBuffer[0] = chr;
+      charBufferIndex = 1;
+      chr = '\0';
+    }
+  }
 }
 
 int SDIBusController::changeAddress(char oldAddr, char newAddr) {
+  if (!this->isValidAddress(oldAddr) || !this->isValidAddress(newAddr)) {
+    SDIBusErrno = BAD_ADDRESS;
+    return -1;
+  }
+
   sendPreamble();
 
   // write data out the serial

@@ -47,8 +47,6 @@ void digitalWrite(int pin, int isHigh) {
 }
 
 void delayMicroseconds(long usec) {
-  cout << "Delay: " << usec << " usec" << endl;
-
   // spinlock until the time is up
   struct timespec startTime, currentTime;
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &startTime);

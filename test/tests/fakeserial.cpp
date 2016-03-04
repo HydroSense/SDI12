@@ -51,13 +51,13 @@ TEST_F(FakeSerialTest, read) {
   ASSERT_FALSE(Serial1.available());
 
   Serial1.addToInputBuffer("abc");
-  ASSERT_TRUE(Serial1.available());
+  ASSERT_EQ(Serial1.available(), 3);
 
   // make sure we are reading out the right value
   ASSERT_EQ(Serial1.read(), 'a');
-  ASSERT_TRUE(Serial1.available());
+  ASSERT_EQ(Serial1.available(), 2);
   ASSERT_EQ(Serial1.read(), 'b');
-  ASSERT_TRUE(Serial1.available());
+  ASSERT_EQ(Serial1.available(), 1);
   ASSERT_EQ(Serial1.read(), 'c');
-  ASSERT_FALSE(Serial1.available());
+  ASSERT_EQ(Serial1.available(), 0);
 }

@@ -6,14 +6,14 @@
 //class SDIRemoteSensor{};
 
 enum SDIBusError {
-  OK,
-  BUSY,
-  ADDRESS_IN_USE,
-  BAD_ADDRESS,
-  NO_SPACE,
-  TIMEOUT,
-  UNREGISTERED_SENSOR,
-  RESPONSE_ERROR
+  OK=0,
+  BUSY=1,
+  ADDRESS_IN_USE=2,
+  BAD_ADDRESS=3,
+  NO_SPACE=4,
+  TIMEOUT=5,
+  UNREGISTERED_SENSOR=6,
+  RESPONSE_ERROR=7
 };
 extern SDIBusError SDIBusErrno;
 
@@ -39,7 +39,7 @@ private:
   void setBufferWrite();
   void setBufferRead();
 
-  // private constructor
+  bool isValidAddress(char addr);
 
 public:
   SDIBusController(int flowControlPin, unsigned int maxSensors);
