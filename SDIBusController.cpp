@@ -174,7 +174,55 @@ int SDIBusController::acknowledgeActive(char addr) {
 }
 
 int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpected) {
-  return -1;
+    sendPreamble();
+
+    Serial1.write(addr);
+    Serial1.write('C');
+    if(altno > 0 && altno < 10){
+       Serial1.write((char) (altno + '0'));
+    }
+    Serial1.write('!');
+    setBufferRead();
+
+    // expected: atttnn<CR><LF>
+
+    int numDelays = 0;
+    while( Serial1.available() < 8){
+       if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
+           // TIME OUT
+           SDIBusErrno = TIMEOUT;
+           cout << "Failure - no device detected" << endl;
+           return -1;
+       }
+       delay(1);
+    }
+    Serial1.read(); // address
+
+    char time[3], meas[2];
+    for(int i=0; i<3; i++){
+       time[i] = Serial1.read();
+    }
+    for(int i=0; i<2; i++){
+       meas[i] = Serial1.read();
+    }
+
+    // Last 2 characters: <CR><LF>
+    char exp[2] = {'\r', '\n'};
+    for(int i=0; i<2; i++){
+        if(Serial1.read() != exp[i]){
+            cout << "Failure" << endl;
+            SDIBusErrno = RESPONSE_ERROR;
+            return -1;
+        }
+    }
+
+    *waitTime = 100*((int) (time[0] - '0')) + 10*((int) (time[1] - '0')) + ((int) (time[2] - '0'));
+    *numExpected = 10*((int) (meas[1] - '0')) + ((int) (meas[0] - '0'));
+
+    cout << "Success" << endl;
+
+    SDIBusErrno = OK;
+    return 0;
 }
 
 int SDIBusController::getData(char addr, float* buffer, int numExpected) {
