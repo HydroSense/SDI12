@@ -192,8 +192,6 @@ int SDIBusController::acknowledgeActive(char addr) {
 
 int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInfo){
 
-  char exp[22] = {addr, '1', '3', 'H', 'y', 'd', 'r', 'o', 'S', 'n', 's', };
-
   sendPreamble();
 
   Serial1.write(addr);
@@ -203,7 +201,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
   setBufferRead();
 
   int numDelays  = 0;
-  while (Serial1.available() < 20) {
+  while (Serial1.available() < 22) {
     if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
         // TIME OUT - set error variable
         SDIBusErrno = TIMEOUT;
@@ -212,12 +210,23 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
     }
   }
 
-  for(int i = 0; i < 20; i++){
+  devInfo->addr[0] = Serial1.read();
 
+  devInfo->sdiVersion[0] = Serial1.read();
+  devInfo->sdiVersion[1] = Serial1.read();
+
+  for (int i = 0; i < 8; i++){
+    devInfo->vendor[i] = Serial1.read();
   }
 
+  for (int j = 0; i < 6; i++){
+    devInfo->modelNum[i] = Serial1.read();
+  }
 
-
+  for (int k = 0; i < 3; i++){
+    devInfo->sensorVersion[i] = Serial1.read();
+  }
+  //handle \r and \n
 }
 
 int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpected) {
