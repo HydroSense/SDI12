@@ -37,16 +37,16 @@ TEST_F(SDIBusControllerTest, begin) {
 TEST_F(SDIBusControllerTest, addressQuery) {
   Serial1.addToInputBuffer("1\r\n");
 
-  char* addr;
-  int res = sdiBusPtr->addressQuery(addr);
+  char addr;
+  int res = sdiBusPtr->addressQuery(&addr);
   ASSERT_EQ(res, 0);
-  ASSERT_EQ(*addr, '1');
+  ASSERT_EQ(addr, '1');
 
   Serial1.addToInputBuffer("x\r\n");
 
-  res = sdiBusPtr->addressQuery(addr);
+  res = sdiBusPtr->addressQuery(&addr);
   ASSERT_EQ(res, 0);
-  ASSERT_EQ(*addr, 'x');
+  ASSERT_EQ(addr, 'x');
 
   ASSERT_TRUE(Serial1.active());
 }
@@ -58,11 +58,10 @@ TEST_F(SDIBusControllerTest, acknowledgeActivePresent) {
   ASSERT_EQ(res, 0);
 
   ASSERT_TRUE(Serial1.active());
+  ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "0!");
 }
 
 TEST_F(SDIBusControllerTest, acknowledgeActiveAbsent) {
-  Serial1.addToInputBuffer("1\r\n");
-
   int res = sdiBusPtr->acknowledgeActive('0');
   ASSERT_NE(res, 0);
   ASSERT_EQ(SDIBusErrno, TIMEOUT);
