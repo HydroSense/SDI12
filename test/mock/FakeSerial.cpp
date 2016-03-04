@@ -156,7 +156,7 @@ int FakeSerial::active() {
 
 // TODO(colin): add support for domain socket
 int FakeSerial::available() {
-  return (mSerialInputBuffer.length() > 0);
+  return mSerialInputBuffer.length();
 
   /*
   int count;
