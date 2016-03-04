@@ -234,7 +234,7 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
     }
 
     *waitTime = 100*((int) (time[0] - '0')) + 10*((int) (time[1] - '0')) + ((int) (time[2] - '0'));
-    *numExpected = 10*((int) (meas[1] - '0')) + ((int) (meas[0] - '0'));
+    *numExpected = 10*((int) (meas[0] - '0')) + ((int) (meas[1] - '0'));
 
     cout << "Success" << endl;
 
@@ -243,6 +243,7 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
 }
 
 int SDIBusController::getData(char addr, float* buffer, int numExpected) {
+    return -1;
   if (!this->isValidAddress(addr)) {
     SDIBusErrno = BAD_ADDRESS;
     return -1;
