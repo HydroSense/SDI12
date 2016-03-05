@@ -164,7 +164,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
 
   int numDelays  = 0;
   while (Serial1.available() < 22) {
-    if( ++numDelays == SDI_MAX_RESPONSE_TIME ){
+    if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
         // TIME OUT - set error variable
         SDIBusErrno = TIMEOUT;
         cout << "Failure" << endl;
@@ -181,11 +181,11 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
     devInfo->vendor[i] = Serial1.read();
   }
 
-  for (int j = 0; i < 6; i++){
+  for (int i = 0; i < 6; i++){
     devInfo->modelNum[i] = Serial1.read();
   }
 
-  for (int k = 0; i < 3; i++){
+  for (int i = 0; i < 3; i++){
     devInfo->sensorVersion[i] = Serial1.read();
   }
   //handle \r and \n
