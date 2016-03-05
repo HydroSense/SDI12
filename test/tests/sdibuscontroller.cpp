@@ -3,13 +3,14 @@
 
 #include <gtest/gtest.h>
 
+#define SERIAL_OUTPUT_PIN 10
 #define FLOW_CONTROL_PIN 13
 SDIBusController* sdiBusPtr;
 
 class SDIBusControllerTest: public ::testing::Test {
 public:
   SDIBusControllerTest() {
-    sdiBusPtr = new SDIBusController(FLOW_CONTROL_PIN, 1);
+    sdiBusPtr = new SDIBusController(Serial1, SERIAL_OUTPUT_PIN, FLOW_CONTROL_PIN);
   }
 
   ~SDIBusControllerTest() {

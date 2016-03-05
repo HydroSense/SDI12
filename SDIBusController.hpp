@@ -1,7 +1,13 @@
 #ifndef __SDI_BUS_CONTROLLER_HPP
 #define __SDI_BUS_CONTROLLER_HPP
 
-#define SDI_MAX_RESPONSE_TIME 15
+#include <Arduino.h>
+
+// protocol timing constants
+#define SDI_BREAK_TIME_MS           12
+#define SDI_MARKING_TIME_MS         9
+#define SDI_SENSOR_RESPONSE_TIME_MS 15
+#define SDI_SENSOR_MAXIMUM_TIME_MS  780
 
 //class SDIRemoteSensor{};
 
@@ -29,12 +35,10 @@ struct SDIDeviceIdentification{
 class SDIBusController {
 //  friend class SDIRemoteSensor;
 private:
-//  SDIRemoteSensor** mSensors;
-  unsigned int mMaxSensorCount;
-  unsigned int mSensorCount;
+  Stream* mSerial;
+  int mSerialOutputPin;
   int mFlowControlPin;
 
-//  SDIRemoteSensor* findSensorFromAddress(char addr);
   void sendPreamble();
   void setBufferWrite();
   void setBufferRead();
@@ -42,7 +46,7 @@ private:
   bool isValidAddress(char addr);
 
 public:
-  SDIBusController(int flowControlPin, unsigned int maxSensors);
+  SDIBusController(Stream& serial, int serialOutputPin, int flowControlPin);
 
   void begin(void);
   void end(void);

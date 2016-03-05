@@ -9,7 +9,21 @@ enum SerialType {
   UNDEF
 };
 
-class FakeSerial {
+class Stream {
+public:
+  virtual void begin(int baud, SerialType type) = 0;
+  virtual void end(void) = 0;
+
+  virtual void write(char chr) = 0;
+  virtual void write(char* str) = 0;
+
+  virtual int active() = 0;
+  virtual int available() = 0;
+
+  virtual char read() = 0;
+};
+
+class FakeSerial : public Stream {
 private:
   bool mActive;
   bool mUsingDomainSocket;
@@ -41,15 +55,16 @@ public:
 
 
   // Arduino compatable API
-  void begin(int baud, SerialType type);
-  void end();
+  // Stream implementation
+  virtual void begin(int baud, SerialType type);
+  virtual void end();
 
-  void write(char chr);
-  void write(char* str);
+  virtual void write(char chr);
+  virtual void write(char* str);
 
-  int active();
-  int available();
-  char read();
+  virtual int active();
+  virtual int available();
+  virtual char read();
 };
 
 extern FakeSerial Serial1;
