@@ -40,6 +40,10 @@ void SDIBusController::end(void) {
 }
 
 void SDIBusController::sendPreamble() {
+  /*
+  Sends the required preamble according to the SDI-12 specification
+  */
+
     // Stop mSerial
     mSerial->end();
 
@@ -103,7 +107,6 @@ int SDIBusController::addressQuery(char *outAddr) {
   }
 
   *outAddr = newAddr; // write new address
-  cout << "Success" << endl;
 
   SDIBusErrno = OK;
   return 0;
@@ -145,8 +148,6 @@ int SDIBusController::acknowledgeActive(char addr) {
           return -1;
       }
   }
-
-  cout << "Success" << endl;
 
   SDIBusErrno = OK;
   return 0;
@@ -261,13 +262,13 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
     *waitTime = 100*((int) (time[0] - '0')) + 10*((int) (time[1] - '0')) + ((int) (time[2] - '0'));
     *numExpected = 10*((int) (meas[0] - '0')) + ((int) (meas[1] - '0'));
 
-    cout << "Success" << endl;
-
     SDIBusErrno = OK;
     return 0;
 }
 
 int SDIBusController::getData(char addr, float* buffer, int numExpected) {
+  /* known as Send Date in SDI-12 specification v1.3 */
+
   if (!this->isValidAddress(addr)) {
     SDIBusErrno = BAD_ADDRESS;
     return -1;
@@ -374,8 +375,6 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
           return -1;
       }
   }
-
-  cout << "Success" << endl;
 
   SDIBusErrno = OK;
   return 0;

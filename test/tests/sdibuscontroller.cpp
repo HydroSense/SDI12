@@ -136,6 +136,28 @@ TEST_F(SDIBusControllerTest, identifyFullOpt){
   ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aI!");
 }
 
+TEST_F(SDIBusControllerTest, changeGoodAddress) {
+  /* In this test, I assume I change the address from '0' to '1'
+  */
+  Serial1.addToInputBuffer("1\r\n");
+
+  int res = sdiBusPtr->changeAddress('0', '1');
+  ASSERT_EQ(res, 0); // ensure ok return value
+
+  ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "0A1!");
+}
+
+TEST_F(SDIBusControllerTest, changeBadAddress) {
+  int res = sdiBusPtr->changeAddress('\254', '0');
+
+  ASSERT_NE(res, 0);
+  ASSERT_EQ(SDIBusErrno, BAD_ADDRESS);
+
+  ASSERT_EQ(Serial1.getOutputHistory().length(), 0);
+}
+
+// TODO(colin): add identify commands
+
 // typical start measurement command
 TEST_F(SDIBusControllerTest, refresh) {
   Serial1.addToInputBuffer("a00101\r\n");
