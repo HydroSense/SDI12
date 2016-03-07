@@ -154,16 +154,16 @@ int SDIBusController::acknowledgeActive(char addr) {
 
 int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInfo){
 
-  sendPreamble();
+  this->sendPreamble();
 
-  Serial1.write(addr);
-  Serial1.write('I');
-  Serial1.write('!');
+  mSerial->write(addr);
+  mSerial->write('I');
+  mSerial->write('!');
 
   setBufferRead();
 
   int numDelays  = 0;
-  while (Serial1.available() < 22) {
+  while (mSerial->available() < 22) {
     if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
         // TIME OUT - set error variable
         SDIBusErrno = TIMEOUT;
@@ -172,23 +172,41 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
     }
   }
 
-  devInfo->addr[0] = Serial1.read();
+  //Sensor address
+  devInfo->addr[0] = mSerial->read();
 
-  devInfo->sdiVersion[0] = Serial1.read();
-  devInfo->sdiVersion[1] = Serial1.read();
+  //SDI12 version number
+  devInfo->sdiVersion[0] = mSerial->read();
+  devInfo->sdiVersion[1] = mSerial->read();
 
+  //Vendor identification
   for (int i = 0; i < 8; i++){
-    devInfo->vendor[i] = Serial1.read();
+    devInfo->vendor[i] = mSerial->read();
   }
 
-  for (int i = 0; i < 6; i++){
-    devInfo->modelNum[i] = Serial1.read();
+  //Sensor model number
+  for (int j = 0; i < 6; i++){
+    devInfo->modelNum[i] = mSerial->read();
   }
 
-  for (int i = 0; i < 3; i++){
-    devInfo->sensorVersion[i] = Serial1.read();
+  //Sensor version
+  for (int k = 0; i < 3; i++){
+    devInfo->sensorVersion[i] = mSerial->read();
   }
-  //handle \r and \n
+
+  //Optional field
+  int term = 0;
+  int optInd = 0;
+  while (!term && optInd < 13) {
+    if (mSerial->available()) {
+      devInfo->optional[optInd] = mSerial->read();
+      if (devInfo->optional[optInd] == '\r') {//Add support for \n?
+        term = 1;
+      }
+      optInd++;
+    }
+  }
+  return 0;
 }
 
 int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpected) {
