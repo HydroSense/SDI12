@@ -89,7 +89,52 @@ TEST_F(SDIBusControllerTest, acknowledgeActiveBadAddress) {
   ASSERT_EQ(Serial1.getOutputHistory().length(), 0);  // ensure nothing written on serial
 }
 
-// TODO(colin): add identify commands
+//Testing identify
+TEST_F(SDIBusControllerTest, identifyNoOpt){
+  //No optional
+  Serial1.addToInputBuffer("a13HYDROSNS123456789\r\n");
+  struct SDIDeviceIdentification devInfo;
+  int res = sdiBusPtr->identify('a', &devInfo);
+
+  ASSERT_EQ(res, 0);
+  ASSERT_STREQ(devInfo.addr, "a");
+  ASSERT_STREQ(devInfo.sdiVersion, "13");
+  ASSERT_STREQ(devInfo.vendor, "HYDROSNS");
+  ASSERT_STREQ(devInfo.modelNum, "123456");
+  ASSERT_STREQ(devInfo.sensorVersion, "789");
+  ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aI!");
+}
+TEST_F(SDIBusControllerTest, identifyPartialOpt){
+  //Partial optional
+  Serial1.addToInputBuffer("a13HYDROSNS123456789ThisIsPart\r\n");
+  struct SDIDeviceIdentification devInfo;
+  int res = sdiBusPtr->identify('a', &devInfo);
+
+  ASSERT_EQ(res, 0);
+  ASSERT_STREQ(devInfo.addr, "a");
+  ASSERT_STREQ(devInfo.sdiVersion, "13");
+  ASSERT_STREQ(devInfo.vendor, "HYDROSNS");
+  ASSERT_STREQ(devInfo.modelNum, "123456");
+  ASSERT_STREQ(devInfo.sensorVersion, "789");
+  ASSERT_STREQ(devInfo.optional, "ThisIsPart");
+  ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aI!");
+}
+
+TEST_F(SDIBusControllerTest, identifyFullOpt){
+  //Full optional
+  Serial1.addToInputBuffer("a13HYDROSNS123456789ThisIsFullTST\r\n");
+  struct SDIDeviceIdentification devInfo;
+  int res = sdiBusPtr->identify('a', &devInfo);
+
+  ASSERT_EQ(res, 0);
+  ASSERT_STREQ(devInfo.addr, "a");
+  ASSERT_STREQ(devInfo.sdiVersion, "13");
+  ASSERT_STREQ(devInfo.vendor, "HYDROSNS");
+  ASSERT_STREQ(devInfo.modelNum, "123456");
+  ASSERT_STREQ(devInfo.sensorVersion, "789");
+  ASSERT_STREQ(devInfo.optional, "ThisIsFullTST");
+  ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aI!");
+}
 
 // typical start measurement command
 TEST_F(SDIBusControllerTest, refresh) {

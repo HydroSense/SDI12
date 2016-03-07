@@ -185,13 +185,13 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
   }
 
   //Sensor model number
-  for (int j = 0; i < 6; i++){
-    devInfo->modelNum[i] = mSerial->read();
+  for (int j = 0; j < 6; j++){
+    devInfo->modelNum[j] = mSerial->read();
   }
 
   //Sensor version
-  for (int k = 0; i < 3; i++){
-    devInfo->sensorVersion[i] = mSerial->read();
+  for (int k = 0; k < 3; k++){
+    devInfo->sensorVersion[k] = mSerial->read();
   }
 
   //Optional field
@@ -201,6 +201,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
     if (mSerial->available()) {
       devInfo->optional[optInd] = mSerial->read();
       if (devInfo->optional[optInd] == '\r') {//Add support for \n?
+        devInfo->optional[optInd] = '\0';
         term = 1;
       }
       optInd++;
