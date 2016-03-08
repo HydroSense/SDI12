@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#include "SDIStream.hpp"
+
 // protocol timing constants
 #define SDI_BREAK_TIME_MS           12
 #define SDI_MARKING_TIME_MS         9
@@ -35,18 +37,14 @@ struct SDIDeviceIdentification{
 class SDIBusController {
 //  friend class SDIRemoteSensor;
 private:
-  Stream* mSerial;
+  SDIStream& mSdiStream;
   int mSerialOutputPin;
   int mFlowControlPin;
-
-  void sendPreamble();
-  void setBufferWrite();
-  void setBufferRead();
 
   bool isValidAddress(char addr);
 
 public:
-  SDIBusController(Stream& serial, int serialOutputPin, int flowControlPin);
+  SDIBusController(SDIStream& serial, int serialOutputPin, int flowControlPin);
 
   void begin(void);
   void end(void);

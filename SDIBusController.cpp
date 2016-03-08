@@ -13,30 +13,30 @@ using namespace std;
 SDIBusError SDIBusErrno;
 
 /* Private Members */
-SDIBusController::SDIBusController(Stream& serial, int serialOutputPin, int flowControlPin) {
-  mSerial = &serial;
+SDIBusController::SDIBusController(SDIStream& sdiStream, int serialOutputPin, int flowControlPin):
+  mSdiStream(sdiStream) {
   mSerialOutputPin = serialOutputPin;
   mFlowControlPin = flowControlPin;
 
   pinMode(mFlowControlPin, OUTPUT);
 
   // put tristate into high impedence mode
-  this->setBufferRead();
+  mSdiStream.setBufferRead();
 }
 
 /* Public Members */
 void SDIBusController::begin() {
-  mSerial->begin(1200, SERIAL_7E1);
+  mSdiStream.begin(1200, SERIAL_7E1);
 
   // ensure buffer is in high impedence mode
-  this->setBufferRead();
+  mSdiStream.setBufferRead();
 }
 
 void SDIBusController::end(void) {
-  mSerial->end();
+  mSdiStream.end();
 
   // put into high impedence mode
-  this->setBufferRead();
+  mSdiStream.setBufferRead();
 }
 
 void SDIBusController::sendPreamble() {
@@ -45,7 +45,7 @@ void SDIBusController::sendPreamble() {
   */
 
     // Stop mSerial
-    mSerial->end();
+    mSdiStream.end();
 
     pinMode(mSerialOutputPin, OUTPUT);
     digitalWrite(mSerialOutputPin, 1);
@@ -54,7 +54,7 @@ void SDIBusController::sendPreamble() {
     delay(SDI_MARKING_TIME_MS);
 
     // re-enable mSerial
-    mSerial->begin(1200, SERIAL_7E1);
+    mSdiStream.begin(1200, SERIAL_7E1);
 }
 
 void SDIBusController::setBufferWrite(){
@@ -78,17 +78,17 @@ bool SDIBusController::isValidAddress(char addr) {
 }
 
 int SDIBusController::addressQuery(char *outAddr) {
-  this->setBufferWrite();
+  mSdiStream.setBufferWrite();
   this->sendPreamble();
-  mSerial->write('?');
-  mSerial->write('!');
-  this->setBufferRead();
+  mSdiStream.write('?');
+  mSdiStream.write('!');
+  mSdiStream.setBufferRead();
 
   // expected: addr, <CR>, <LF>
   char exp[2] = {'\r', '\n'};
 
   int numDelays = 0;
-  while( mSerial->available() < 3){
+  while( mSdiStream.available() < 3){
       if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
           // TIME OUT
           SDIBusErrno = TIMEOUT;
@@ -97,9 +97,9 @@ int SDIBusController::addressQuery(char *outAddr) {
       }
       delay(1);
   }
-  char newAddr = mSerial->read();
+  char newAddr = mSdiStream.read();
   for(int i=0; i<2; i++){
-      if(mSerial->read() != exp[i]){
+      if(mSdiStream.read() != exp[i]){
           cout << "Failure" << endl;
           SDIBusErrno = RESPONSE_ERROR;
           return -1;
@@ -119,17 +119,17 @@ int SDIBusController::acknowledgeActive(char addr) {
   }
 
   // write data out the serial
-  this->setBufferWrite();
+  mSdiStream.setBufferWrite();
   sendPreamble();
-  mSerial->write(addr);
-  mSerial->write('!');
-  this->setBufferRead();
+  mSdiStream.write(addr);
+  mSdiStream.write('!');
+  mSdiStream.setBufferRead();
 
   // expected: sensor addr, <CR>, <LF>
   char exp[3] = {addr, '\r', '\n'};
 
   int numDelays = 0;
-  while( mSerial->available() < 3){
+  while( mSdiStream.available() < 3){
       if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
           // TIME OUT - set error variable
           SDIBusErrno = TIMEOUT;
@@ -141,7 +141,7 @@ int SDIBusController::acknowledgeActive(char addr) {
 
   // sequentially compare each byte to expected
   for(int i=0; i<3; i++){
-      if( mSerial->read() != exp[i] ){
+      if( mSdiStream.read() != exp[i] ){
           // incorrect response - set error variable
           SDIBusErrno = RESPONSE_ERROR;
           cout << "Failure" << endl;
@@ -157,14 +157,14 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
 
   this->sendPreamble();
 
-  mSerial->write(addr);
-  mSerial->write('I');
-  mSerial->write('!');
+  mSdiStream.write(addr);
+  mSdiStream.write('I');
+  mSdiStream.write('!');
 
   setBufferRead();
 
   int numDelays  = 0;
-  while (mSerial->available() < 22) {
+  while (mSdiStream.available() < 22) {
     if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
         // TIME OUT - set error variable
         SDIBusErrno = TIMEOUT;
@@ -174,33 +174,33 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
   }
 
   //Sensor address
-  devInfo->addr[0] = mSerial->read();
+  devInfo->addr[0] = mSdiStream.read();
 
   //SDI12 version number
-  devInfo->sdiVersion[0] = mSerial->read();
-  devInfo->sdiVersion[1] = mSerial->read();
+  devInfo->sdiVersion[0] = mSdiStream.read();
+  devInfo->sdiVersion[1] = mSdiStream.read();
 
   //Vendor identification
   for (int i = 0; i < 8; i++){
-    devInfo->vendor[i] = mSerial->read();
+    devInfo->vendor[i] = mSdiStream.read();
   }
 
   //Sensor model number
   for (int j = 0; j < 6; j++){
-    devInfo->modelNum[j] = mSerial->read();
+    devInfo->modelNum[j] = mSdiStream.read();
   }
 
   //Sensor version
   for (int k = 0; k < 3; k++){
-    devInfo->sensorVersion[k] = mSerial->read();
+    devInfo->sensorVersion[k] = mSdiStream.read();
   }
 
   //Optional field
   int term = 0;
   int optInd = 0;
   while (!term && optInd < 13) {
-    if (mSerial->available()) {
-      devInfo->optional[optInd] = mSerial->read();
+    if (mSdiStream.available()) {
+      devInfo->optional[optInd] = mSdiStream.read();
       if (devInfo->optional[optInd] == '\r') {//Add support for \n?
         devInfo->optional[optInd] = '\0';
         term = 1;
@@ -217,20 +217,20 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
     return -1;
   }
 
-    this->setBufferWrite();
+    mSdiStream.setBufferWrite();
     this->sendPreamble();
-    mSerial->write(addr);
-    mSerial->write('C');
+    mSdiStream.write(addr);
+    mSdiStream.write('C');
     if(altno > 0 && altno < 10){
-       mSerial->write((char) (altno + '0'));
+       mSdiStream.write((char) (altno + '0'));
     }
-    mSerial->write('!');
-    this->setBufferRead();
+    mSdiStream.write('!');
+    mSdiStream.setBufferRead();
 
     // expected: atttnn<CR><LF>
 
     int numDelays = 0;
-    while( mSerial->available() < 8){
+    while( mSdiStream.available() < 8){
        if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
            // TIME OUT
            SDIBusErrno = TIMEOUT;
@@ -239,20 +239,20 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
        }
        delay(1);
     }
-    mSerial->read(); // address
+    mSdiStream.read(); // address
 
     char time[3], meas[2];
     for(int i=0; i<3; i++){
-       time[i] = mSerial->read();
+       time[i] = mSdiStream.read();
     }
     for(int i=0; i<2; i++){
-       meas[i] = mSerial->read();
+       meas[i] = mSdiStream.read();
     }
 
     // Last 2 characters: <CR><LF>
     char exp[2] = {'\r', '\n'};
     for(int i=0; i<2; i++){
-        if(mSerial->read() != exp[i]){
+        if(mSdiStream.read() != exp[i]){
             cout << "Failure" << endl;
             SDIBusErrno = RESPONSE_ERROR;
             return -1;
@@ -274,23 +274,23 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
     return -1;
   }
 
-  this->setBufferWrite();
+  mSdiStream.setBufferWrite();
   this->sendPreamble();
 
   int numReceived = 0;
   char charBuffer[10] = {'\0'};
   int charBufferIndex;
   for (char iChr='0'; numReceived < numExpected && iChr <= '9'; iChr++) {
-    this->setBufferWrite();
-    mSerial->write(addr);
-    mSerial->write('D');
-    mSerial->write(iChr);
-    mSerial->write('!');
-    this->setBufferRead();
+    mSdiStream.setBufferWrite();
+    mSdiStream.write(addr);
+    mSdiStream.write('D');
+    mSdiStream.write(iChr);
+    mSdiStream.write('!');
+    mSdiStream.setBufferRead();
 
     // ensure the response address is correct
-    while(mSerial->available() < 1);
-    char responseAddress = mSerial->read();
+    while(mSdiStream.available() < 1);
+    char responseAddress = mSdiStream.read();
     if (responseAddress != addr) {
       SDIBusErrno = RESPONSE_ERROR;
       return -1;
@@ -298,15 +298,15 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
 
     // read the sign
     charBufferIndex = 0;
-    while(!mSerial->available());
-    charBuffer[charBufferIndex++] = mSerial->read();
+    while(!mSdiStream.available());
+    charBuffer[charBufferIndex++] = mSdiStream.read();
 
     // keep reading in digits until we get a sign
     char chr = '\0';
     while (chr != '\n') {
       while (chr != '+' && chr != '-' && chr != '\r') {
-        while(!mSerial->available());
-        chr = mSerial->read();
+        while(!mSdiStream.available());
+        chr = mSdiStream.read();
         charBuffer[charBufferIndex++] = chr;
       }
       charBufferIndex--;          // decrement the counter becuase we saved the chr when we returned
@@ -318,8 +318,8 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
       // go to the top of the loop
       if (chr == '\r') {
         // wait for the newline, if not newline then there is a bus error
-        while(!mSerial->available());
-        chr = mSerial->read();
+        while(!mSdiStream.available());
+        chr = mSdiStream.read();
         if (chr != '\n') {
           SDIBusErrno = RESPONSE_ERROR;
           return -1;
@@ -344,19 +344,19 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
   }
 
   // write data out the serial
-  this->setBufferWrite();
+  mSdiStream.setBufferWrite();
   this->sendPreamble();
-  mSerial->write(oldAddr);
-  mSerial->write('A');
-  mSerial->write(newAddr);
-  mSerial->write('!');
-  this->setBufferRead();
+  mSdiStream.write(oldAddr);
+  mSdiStream.write('A');
+  mSdiStream.write(newAddr);
+  mSdiStream.write('!');
+  mSdiStream.setBufferRead();
 
   // expected: new sensor addr, <CR>, <LF>
   char exp[3] = {newAddr, '\r', '\n'};
 
   int numDelays = 0;
-  while( mSerial->available() < 3){
+  while( mSdiStream.available() < 3){
       if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
           // TIME OUT - set error variable
           SDIBusErrno = TIMEOUT;
@@ -368,7 +368,7 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
 
   // sequentially compare each byte to expected
   for(int i=0; i<3; i++){
-      if( mSerial->read() != exp[i] ){
+      if( mSdiStream.read() != exp[i] ){
           // incorrect response - set error variable
           SDIBusErrno = RESPONSE_ERROR;
           cout << "Failure - response error" << endl;
@@ -381,9 +381,9 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
 }
 
 int SDIBusController::respondToAcknowledgeActive(char addr) {
-  mSerial->write(addr);
-  mSerial->write('\r');
-  mSerial->write('\n');
+  mSdiStream.write(addr);
+  mSdiStream.write('\r');
+  mSdiStream.write('\n');
 
   SDIBusErrno = OK;
   return 0;
@@ -392,35 +392,35 @@ int SDIBusController::respondToAcknowledgeActive(char addr) {
 //respond to send identification
 
 int SDIBusController::respondToChangeAddress(char addr){
-  mSerial->write(addr);
-  mSerial->write('\r');
-  mSerial->write('\n');
+  mSdiStream.write(addr);
+  mSdiStream.write('\r');
+  mSdiStream.write('\n');
 
   SDIBusErrno = OK;
   return 0;
 }
 
 int SDIBusController::respondToAddressQuery(char addr){
-  mSerial->write(addr);
-  mSerial->write('\r');
-  mSerial->write('\n');
+  mSdiStream.write(addr);
+  mSdiStream.write('\r');
+  mSdiStream.write('\n');
 
   SDIBusErrno = OK;
   return 0;
 }
 
 int SDIBusController::respondToRefresh(char addr, int altno){
-  mSerial->write(addr);
+  mSdiStream.write(addr);
 
-  mSerial->write('1');
-  mSerial->write('2');
-  mSerial->write('3');
+  mSdiStream.write('1');
+  mSdiStream.write('2');
+  mSdiStream.write('3');
 
-  mSerial->write('4');
-  mSerial->write('5');
+  mSdiStream.write('4');
+  mSdiStream.write('5');
 
-  mSerial->write('\r');
-  mSerial->write('\n');
+  mSdiStream.write('\r');
+  mSdiStream.write('\n');
 
   SDIBusErrno = OK;
   return 0;
