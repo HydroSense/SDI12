@@ -46,7 +46,7 @@ void SDIBusController::sendPreamble() {
   */
 
     // Stop mSerial
-    this.end();
+    this->end();
 
     pinMode(mSerialOutputPin, OUTPUT);
     digitalWrite(mSerialOutputPin, 1);
@@ -55,7 +55,7 @@ void SDIBusController::sendPreamble() {
     delay(SDI_MARKING_TIME_MS);
 
     // re-enable mSerial
-    this.begin(1200, SERIAL_7E1);
+    this->begin();
 }
 
 void SDIBusController::setBufferWrite(){
@@ -87,14 +87,14 @@ void SDISerial::flush() {
 // Print implementation
 //
 
+/* This sets the buffer to write, sends the preamble, and writes to the serial
+  port. It is the caller's responsibility to set the buffer back to read */
 size_t SDISerial::write(uint8_t val) {
-  // TODO(colby,matt): figure out which direction
-  digitalWrite(mFlowControlPin, ____);
+  this->setBufferWrite();
   return mSerial.write(val);
 }
 size_t SDISerial::write(const char* str, size_t size) {
-  // TODO(colby,matt): figure out which direction
-  digitalWrite(mFlowControlPin, ____);
+  this->setBufferWrite();
   return mSerial.write(str, size);
 }
 

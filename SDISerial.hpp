@@ -7,11 +7,15 @@
 
 class SDISerial : public SDIStream {
 private:
-  Stream& mStream;
+  Stream &mStream;
   int mSerialOutPin;
   int mFlowControlPin;
+  bool isHardwareSerial;
+
 public:
-  SDISerial(Serial& serial, int serialOutPin, int flowControlPin);
+  /* Constructors for both HardwareSerial and SoftwareSerial */
+  SDISerial(SoftwareSerial &stream, int serialOutPin, int flowControlPin):
+  SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
 
   /* SDISerial Implementation */
   void begin();
