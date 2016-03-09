@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-class SDISerial : public Stream {
+class SDIStream : public Stream {
 public:
   virtual void begin() = 0;
   virtual void end() = 0;

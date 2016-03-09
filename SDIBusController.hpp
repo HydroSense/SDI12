@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #include "SDIStream.hpp"
+#include "SDISerial.hpp"
 
 // protocol timing constants
 #define SDI_BREAK_TIME_MS           12
@@ -37,7 +38,7 @@ struct SDIDeviceIdentification{
 class SDIBusController {
 //  friend class SDIRemoteSensor;
 private:
-  SDIStream& mSdiStream;
+  SDIStream &mSdiStream;
   int mSerialOutputPin;
   int mFlowControlPin;
 

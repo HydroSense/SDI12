@@ -4,6 +4,9 @@
 // pull in all other mock dependencies
 #include "FakeSerial.hpp"
 
+// for uint8_t
+#include <stdint.h>
+
 #include <exception>
 using namespace std;
 
