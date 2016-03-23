@@ -195,3 +195,14 @@ int FakeSerial::read() {
   }
   */
 }
+
+int FakeSerial::peek(){
+  if(!this->available()){
+    return '\0';
+  }
+  return (int) mSerialInputBuffer[0];
+}
+
+bool FakeSerial::flush(){
+  return true; // TODO implement
+}

@@ -13,7 +13,7 @@ class SDISerial : public SDIStream {
 private:
   Stream &mStream;
   int mSerialOutPin;
-  int mDigitalWritePin;
+  int mFlowControlPin;
   bool isHardwareSerial;
 
 public:
@@ -32,11 +32,11 @@ public:
   int available();
   int read();
   int peek();
-  void flush();
+  bool flush();
 
   /* Print Implementation */
-  size_t write(uint8_t val);
-  size_t write(const char* str, size_t size);
+  void write(uint8_t val);
+  void write(const char* str, size_t size);
 };
 
 #endif

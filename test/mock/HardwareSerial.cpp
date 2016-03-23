@@ -195,3 +195,13 @@ int HardwareSerial::read() {
   }
   */
 }
+int HardwareSerial::peek(){
+  if(!this->available()){
+    return '\0';
+  }
+  return (int) mSerialInputBuffer[0];
+}
+
+bool HardwareSerial::flush(){
+  return true; // TODO implement
+}
