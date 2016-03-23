@@ -50,6 +50,8 @@ public:
   virtual int active();
   virtual int available();
   virtual int read();
+  virtual int peek();
+  virtual bool flush();
 };
 
 extern HardwareSerial Serial2;

@@ -23,6 +23,9 @@ public:
   virtual int available() = 0;
 
   virtual int read() = 0;
+
+  virtual int peek() = 0;
+  virtual bool flush() = 0;
 };
 
 class FakeSerial : public Stream {
@@ -67,6 +70,8 @@ public:
   virtual int active();
   virtual int available();
   virtual int read();
+  virtual int peek();
+  virtual bool flush();
 };
 
 extern FakeSerial Serial1;
