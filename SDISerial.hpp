@@ -13,12 +13,12 @@ class SDISerial : public SDIStream {
 private:
   Stream &mStream;
   int mSerialOutPin;
-  int mFlowControlPin;
+  int mDigitalWritePin;
   bool isHardwareSerial;
 
 public:
   /* Constructors for both HardwareSerial and SoftwareSerial */
-  SDISerial(SoftwareSerial &stream, int serialOutPin, int flowControlPin):
+  SDISerial(SoftwareSerial &stream, int serialOutPin, int flowControlPin);
   SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
 
   /* SDISerial Implementation */

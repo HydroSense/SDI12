@@ -1,6 +1,8 @@
 #ifndef __FAKE_SERIAL_CPP
 #define __FAKE_SERIAL_CPP
 
+// We will use this as simulating SoftwareSerial
+
 #include <string>
 using namespace std;
 
