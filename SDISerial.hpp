@@ -5,7 +5,7 @@
 
 #include "SDIStream.hpp"
 
-#define SoftwareSerial FakeSerial
+#define SoftwareSerial FakeSerial //??????
 
 class SDISerial : public SDIStream {
 private:
@@ -16,8 +16,8 @@ private:
 
 public:
   /* Constructors for both HardwareSerial and SoftwareSerial */
-  SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
   SDISerial(SoftwareSerial &stream, int serialOutPin, int flowControlPin):
+  SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
 
   /* SDISerial Implementation */
   void begin();

@@ -171,7 +171,7 @@ int FakeSerial::available() {
 }
 
 // TODO(colin): add support for domain socket
-char FakeSerial::read() {
+int FakeSerial::read() {
   if (!this->available()) {
     return '\0';
   }
@@ -180,7 +180,7 @@ char FakeSerial::read() {
   char c = mSerialInputBuffer[0];
   mSerialInputBuffer.erase(0, 1);
 
-  return c;
+  return (int)c;
 
   /*
   char out;

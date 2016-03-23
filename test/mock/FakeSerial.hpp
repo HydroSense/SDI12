@@ -20,7 +20,7 @@ public:
   virtual int active() = 0;
   virtual int available() = 0;
 
-  virtual char read() = 0;
+  virtual int read() = 0;
 };
 
 class FakeSerial : public Stream {
@@ -64,7 +64,7 @@ public:
 
   virtual int active();
   virtual int available();
-  virtual char read();
+  virtual int read();
 };
 
 extern FakeSerial Serial1;
