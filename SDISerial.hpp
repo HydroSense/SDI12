@@ -5,6 +5,8 @@
 
 #include "SDIStream.hpp"
 
+#include "HardwareSerial.hpp"
+
 #define SoftwareSerial FakeSerial //??????
 
 class SDISerial : public SDIStream {

@@ -171,6 +171,7 @@ int FakeSerial::available() {
 }
 
 // TODO(colin): add support for domain socket
+// TODO: make sure return type int is correct..
 int FakeSerial::read() {
   if (!this->available()) {
     return '\0';
