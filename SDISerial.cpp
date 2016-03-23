@@ -2,18 +2,19 @@
 #define __SDI_SERIAL_CPP
 
 #include "SDISerial.hpp"
+#include "SDIBusController.hpp"
 
 SDISerial::SDISerial(SoftwareSerial &stream, int serialOutPin, int flowControlPin):
   mStream(stream){
     mSerialOutPin = serialOutPin;
-    mDigitalWritePin = flowControlPin;
+    mFlowControlPin = flowControlPin;
     isHardwareSerial = false;
   }
 
 SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin):
   mStream(stream){
     mSerialOutPin = serialOutPin;
-    mDigitalWritePin = flowControlPin;
+    mFlowControlPin = flowControlPin;
     isHardwareSerial = true;
 }
 
@@ -49,7 +50,7 @@ void SDISerial::end() {
   }
 }
 
-void SDIBusController::sendPreamble() {
+void SDISerial::sendPreamble() {
   /*
   Sends the required preamble according to the SDI-12 specification
   */
@@ -57,21 +58,21 @@ void SDIBusController::sendPreamble() {
     // Stop mSerial
     this->end();
 
-    pinMode(mSerialOutputPin, OUTPUT);
-    digitalWrite(mSerialOutputPin, 1);
+    pinMode(mSerialOutPin, OUTPUT);
+    digitalWrite(mSerialOutPin, 1);
     delay(SDI_BREAK_TIME_MS);
-    digitalWrite(mSerialOutputPin, 0);
+    digitalWrite(mSerialOutPin, 0);
     delay(SDI_MARKING_TIME_MS);
 
     // re-enable mSerial
     this->begin();
 }
 
-void SDIBusController::setBufferWrite(){
+void SDISerial::setBufferWrite(){
     digitalWrite(mFlowControlPin, 0);
 }
 
-void SDIBusController::setBufferRead(){
+void SDISerial::setBufferRead(){
     digitalWrite(mFlowControlPin, 1);
 }
 

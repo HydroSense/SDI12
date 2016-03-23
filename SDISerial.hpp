@@ -13,7 +13,7 @@ class SDISerial : public SDIStream {
 private:
   Stream &mStream;
   int mSerialOutPin;
-  int mDigitalWritePin;
+  int mFlowControlPin;
   bool isHardwareSerial;
 
 public:
