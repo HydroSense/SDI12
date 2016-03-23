@@ -39,7 +39,8 @@ TEST_F(FakeSerialTest, write) {
   ASSERT_EQ(Serial1.getOutputHistory().length(), 1);
   ASSERT_EQ(Serial1.getOutputHistory()[0], 'a');
 
-  Serial1.write("message");
+  char message[] = "message";
+  Serial1.write(message);
   ASSERT_EQ(Serial1.getOutputHistory().length(), 8);
   ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "amessage");
 
