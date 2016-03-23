@@ -24,19 +24,28 @@ SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPi
 void SDISerial::begin() {
   // Begin with configuration 1200 baud, SERIAL_7E1
   if(isHardwareSerial){
-    ((HardwareSerial)mStream).begin(1200, SERIAL_7E1);
+    // Testing typecasting:
+    HardwareSerial &newStream = dynamic_cast<HardwareSerial &>(mStream);
+    newStream.begin(1200, SERIAL_7E1);
+    //((HardwareSerial) mStream).begin(1200, SERIAL_7E1);
   }
   else{
-    ((SoftwareSerial)mStream).begin(1200, SERIAL_7E1);
+    SoftwareSerial &newStream = dynamic_cast<SoftwareSerial &>(mStream);
+    newStream.begin(1200, SERIAL_7E1);
+    //((SoftwareSerial) mStream).begin(1200, SERIAL_7E1);
   }
 }
 
 void SDISerial::end() {
   if(isHardwareSerial){
-    ((HardwareSerial)mStream).end();
+    HardwareSerial &newStream = dynamic_cast<HardwareSerial &>(mStream);
+    newStream.end();
+    //((HardwareSerial)mStream).end();
   }
   else{
-    ((SoftwareSerial)mStream).end();
+    SoftwareSerial &newStream = dynamic_cast<SoftwareSerial &>(mStream);
+    newStream.end();
+    //((SoftwareSerial)mStream).end();
   }
 }
 
