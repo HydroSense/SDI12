@@ -59,5 +59,6 @@ public:
 
 };
 
+extern FakeSerial Serial1;
 
 #endif
