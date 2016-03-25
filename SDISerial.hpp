@@ -30,8 +30,8 @@ public:
   void flush();
 
   /* Print Implementation */
-  void write(uint8_t val);
-  void write(const char* str, size_t size);
+  size_t write(char chr);
+  size_t write(char* str);
 };
 
 #endif

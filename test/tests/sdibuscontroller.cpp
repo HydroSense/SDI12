@@ -10,7 +10,8 @@ SDIBusController* sdiBusPtr;
 class SDIBusControllerTest: public ::testing::Test {
 public:
   SDIBusControllerTest() {
-    sdiBusPtr = new SDIBusController(Serial1, SERIAL_OUTPUT_PIN, FLOW_CONTROL_PIN);
+    SDISerial mySDISerial = SDISerial(Serial1, SERIAL_OUTPUT_PIN, FLOW_CONTROL_PIN);
+    sdiBusPtr = new SDIBusController(mySDISerial);
   }
 
   ~SDIBusControllerTest() {

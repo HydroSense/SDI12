@@ -97,11 +97,11 @@ void SDISerial::flush() {
 
 /* This sets the buffer to write, sends the preamble, and writes to the serial
   port. It is the caller's responsibility to set the buffer back to read */
-void SDISerial::write(uint8_t val) {
+size_t SDISerial::write(char chr) {
   this->setBufferWrite();
   //return mStream.write(val);
 }
-void SDISerial::write(const char* str, size_t size) {
+size_t SDISerial::write(char* str) {
   this->setBufferWrite();
   //return mStream.write(str, size);
 }

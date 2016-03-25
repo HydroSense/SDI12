@@ -39,14 +39,17 @@ struct SDIDeviceIdentification{
 class SDIBusController {
 //  friend class SDIRemoteSensor;
 private:
-  SDIStream &mSdiStream;
+  SDISerial &mySDISerial;
+  /*
   int mSerialOutputPin;
   int mFlowControlPin;
+  */
 
   bool isValidAddress(char addr);
 
 public:
-  SDIBusController(SDIStream& serial, int serialOutputPin, int flowControlPin);
+//  SDIBusController(SDIStream& serial, int serialOutputPin, int flowControlPin);
+  SDIBusController(SDISerial &serial);
 
   void begin(void);
   void end(void);
