@@ -10,7 +10,7 @@
 #include <iostream>
 using namespace std;
 
-FakeSerial Serial1;
+extern FakeSerial Serial1; // instantiate FakeSerial
 
 FakeSerial::FakeSerial() {
   mActive = false;

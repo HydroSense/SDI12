@@ -54,6 +54,8 @@ bool SDIBusController::isValidAddress(char addr) {
 int SDIBusController::addressQuery(char *outAddr) {
   mSdiStream.setBufferWrite();
   mSdiStream.sendPreamble();
+  // TESTING:
+  mSdiStream.available();
   mSdiStream.write('?');
   mSdiStream.write('!');
   mSdiStream.setBufferRead();

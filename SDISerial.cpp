@@ -4,19 +4,12 @@
 #include "SDISerial.hpp"
 #include "SDIBusController.hpp"
 
-SDISerial::SDISerial(SoftwareSerial &stream, int serialOutPin, int flowControlPin):
+SDISerial::SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin):
   mStream(stream){
     mSerialOutPin = serialOutPin;
     mFlowControlPin = flowControlPin;
     isHardwareSerial = false;
   }
-
-SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin):
-  mStream(stream){
-    mSerialOutPin = serialOutPin;
-    mFlowControlPin = flowControlPin;
-    isHardwareSerial = true;
-}
 
 //
 // SDISerial Implementation
@@ -25,13 +18,16 @@ SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPi
 void SDISerial::begin() {
   // Begin with configuration 1200 baud, SERIAL_7E1
   if(isHardwareSerial){
+    /*
     // Testing typecasting:
     HardwareSerial &newStream = dynamic_cast<HardwareSerial &>(mStream);
     newStream.begin(1200, SERIAL_7E1);
     //((HardwareSerial) mStream).begin(1200, SERIAL_7E1);
+    */
   }
   else{
-    SoftwareSerial &newStream = dynamic_cast<SoftwareSerial &>(mStream);
+//    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
+    FakeSerial newStream = (FakeSerial) mStream;
     newStream.begin(1200, SERIAL_7E1);
     //((SoftwareSerial) mStream).begin(1200, SERIAL_7E1);
   }
@@ -39,12 +35,14 @@ void SDISerial::begin() {
 
 void SDISerial::end() {
   if(isHardwareSerial){
+    /*
     HardwareSerial &newStream = dynamic_cast<HardwareSerial &>(mStream);
     newStream.end();
     //((HardwareSerial)mStream).end();
+    */
   }
   else{
-    SoftwareSerial &newStream = dynamic_cast<SoftwareSerial &>(mStream);
+    FakeSerial newStream = (FakeSerial) mStream;
     newStream.end();
     //((SoftwareSerial)mStream).end();
   }
@@ -89,8 +87,8 @@ int SDISerial::read() {
 int SDISerial::peek() {
   return mStream.peek();
 }
-bool SDISerial::flush() {
-  return mStream.flush();
+void SDISerial::flush() {
+  mStream.flush();
 }
 
 //

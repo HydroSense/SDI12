@@ -4,28 +4,12 @@
 // We will use this as simulating SoftwareSerial
 
 #include <string>
+#include "Stream.hpp"
 using namespace std;
 
 enum SerialType {
   SERIAL_7E1,
   UNDEF
-};
-
-class Stream {
-public:
-  virtual void begin(int baud, SerialType type) = 0;
-  virtual void end(void) = 0;
-
-  virtual void write(char chr) = 0;
-  virtual void write(char* str) = 0;
-
-  virtual int active() = 0;
-  virtual int available() = 0;
-
-  virtual int read() = 0;
-
-  virtual int peek() = 0;
-  virtual bool flush() = 0;
 };
 
 class FakeSerial : public Stream {
@@ -71,9 +55,7 @@ public:
   virtual int available();
   virtual int read();
   virtual int peek();
-  virtual bool flush();
+  virtual void flush();
 };
-
-extern FakeSerial Serial1;
 
 #endif

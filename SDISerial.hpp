@@ -5,10 +5,6 @@
 
 #include "SDIStream.hpp"
 
-#include "HardwareSerial.hpp"
-
-#define SoftwareSerial FakeSerial //??????
-
 class SDISerial : public SDIStream {
 private:
   Stream &mStream;
@@ -18,8 +14,7 @@ private:
 
 public:
   /* Constructors for both HardwareSerial and SoftwareSerial */
-  SDISerial(SoftwareSerial &stream, int serialOutPin, int flowControlPin);
-  SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
+  SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin);
 
   /* SDISerial Implementation */
   void begin();
@@ -32,7 +27,7 @@ public:
   int available();
   int read();
   int peek();
-  bool flush();
+  void flush();
 
   /* Print Implementation */
   void write(uint8_t val);

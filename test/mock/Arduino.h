@@ -3,7 +3,7 @@
 
 // pull in all other mock dependencies
 #include "FakeSerial.hpp"
-#include "HardwareSerial.hpp"
+#include "Stream.hpp"
 
 // for uint8_t
 #include <stdint.h>
