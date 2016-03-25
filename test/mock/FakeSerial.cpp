@@ -133,7 +133,7 @@ void FakeSerial::end() {
   mActive = false;
 }
 
-void FakeSerial::write(char chr) {
+size_t FakeSerial::write(char chr) {
   // append to the output history
   mSerialOutputHistory += chr;
 
@@ -141,7 +141,7 @@ void FakeSerial::write(char chr) {
     send(mDomainSocket, &chr, sizeof(char), 0);
   }
 }
-void FakeSerial::write(char* str) {
+size_t FakeSerial::write(char* str) {
   // append to the output history
   mSerialOutputHistory += str;
 
@@ -203,6 +203,6 @@ int FakeSerial::peek(){
   return (int) mSerialInputBuffer[0];
 }
 
-bool FakeSerial::flush(){
-  return true; // TODO implement
+void FakeSerial::flush(){
+  // TODO implement
 }

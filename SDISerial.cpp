@@ -27,7 +27,7 @@ void SDISerial::begin() {
   }
   else{
 //    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
-    FakeSerial newStream = (FakeSerial) mStream;
+    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
     newStream.begin(1200, SERIAL_7E1);
     //((SoftwareSerial) mStream).begin(1200, SERIAL_7E1);
   }
@@ -42,7 +42,7 @@ void SDISerial::end() {
     */
   }
   else{
-    FakeSerial newStream = (FakeSerial) mStream;
+    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
     newStream.end();
     //((SoftwareSerial)mStream).end();
   }

@@ -10,8 +10,8 @@ public:
   virtual void flush() = 0;
 
   //From the Print class:
-  virtual size_t write(int) = 0;
-  virtual size_t write(const int *buf) = 0;
+  virtual size_t write(char chr) = 0;
+  virtual size_t write(char *buf) = 0;
 };
 
 #endif

@@ -44,18 +44,20 @@ public:
 
 
   // Arduino compatable API
+   void begin(int baud, SerialType type);
+   void end();
+   int active();
+
   // Stream implementation
-  virtual void begin(int baud, SerialType type);
-  virtual void end();
+   int available();
+   int read();
+   int peek();
+   void flush();
 
-  virtual void write(char chr);
-  virtual void write(char* str);
+   size_t write(char chr);
+   size_t write(char* str);
 
-  virtual int active();
-  virtual int available();
-  virtual int read();
-  virtual int peek();
-  virtual void flush();
 };
+
 
 #endif
