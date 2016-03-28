@@ -31,9 +31,7 @@ void SDISerial::begin() {
   }
   else{
 //    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
-    cout<<"before cast"<<endl;
     FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
-    cout<<"after cast"<<endl;
     newStream.begin(1200, SERIAL_7E1);
     //((SoftwareSerial) mStream).begin(1200, SERIAL_7E1);
   }
