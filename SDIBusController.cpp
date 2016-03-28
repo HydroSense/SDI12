@@ -24,16 +24,11 @@ SDIBusController::SDIBusController(SDISerial &serial):
 
   // put tristate into high impedence mode
   mySDISerial.setBufferRead();
-  cout<<"Set buffer to read"<<endl;
 }
 
 /* Public Members */
 void SDIBusController::begin() {
-  cout<<"setting buffer to read in begin():"<<endl;
-  mySDISerial.setBufferRead();
-  cout<<"before begin"<<endl;
   mySDISerial.begin();
-  cout<<"after mySDISerial.begin()"<<endl;
 
   // ensure buffer is in high impedence mode
   mySDISerial.setBufferRead();
@@ -61,8 +56,6 @@ bool SDIBusController::isValidAddress(char addr) {
 int SDIBusController::addressQuery(char *outAddr) {
   mySDISerial.setBufferWrite();
   mySDISerial.sendPreamble();
-  // TESTING:
-  mySDISerial.available();
   mySDISerial.write('?');
   mySDISerial.write('!');
   mySDISerial.setBufferRead();
@@ -97,6 +90,7 @@ int SDIBusController::addressQuery(char *outAddr) {
 
 int SDIBusController::acknowledgeActive(char addr) {
   if (!this->isValidAddress(addr)) {
+    cout<<"Bad address"<<endl;
     SDIBusErrno = BAD_ADDRESS;
     return -1;
   }
