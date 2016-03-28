@@ -28,12 +28,12 @@ extern SDIBusError SDIBusErrno;
 
 struct SDIDeviceIdentification{
   //TODO Initialize all char arrays to null values
-  char addr[2];
-  char sdiVersion[3];
-  char vendor[9];
-  char modelNum[7];
-  char sensorVersion[4];
-  char optional[14];
+  char addr[2] = {};
+  char sdiVersion[3] = {};
+  char vendor[9] = {};
+  char modelNum[7] = {};
+  char sensorVersion[4] = {};
+  char optional[14] = {};
 };
 
 class SDIBusController {
