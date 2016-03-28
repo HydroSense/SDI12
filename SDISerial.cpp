@@ -20,7 +20,6 @@ SDISerial::SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin):
 
 void SDISerial::begin() {
   // Begin with configuration 1200 baud, SERIAL_7E1
-  cout<<"In SDISeral.cpp"<<endl;
   if(isHardwareSerial){
     /*
     // Testing typecasting:

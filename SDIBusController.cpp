@@ -56,8 +56,6 @@ bool SDIBusController::isValidAddress(char addr) {
 int SDIBusController::addressQuery(char *outAddr) {
   mySDISerial.setBufferWrite();
   mySDISerial.sendPreamble();
-  // TESTING:
-  mySDISerial.available();
   mySDISerial.write('?');
   mySDISerial.write('!');
   mySDISerial.setBufferRead();
