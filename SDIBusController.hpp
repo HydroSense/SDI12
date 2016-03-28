@@ -32,6 +32,7 @@ struct SDIDeviceIdentification{
   char sdiVersion[3] = {};
   char vendor[9] = {};
   char modelNum[7] = {};
+  
   char sensorVersion[4] = {};
   char optional[14] = {};
 };
