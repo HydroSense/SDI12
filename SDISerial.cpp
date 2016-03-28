@@ -4,11 +4,8 @@
 #include "SDISerial.hpp"
 #include "SDIBusController.hpp"
 
-#include <iostream>
-using namespace std;
-
 SDISerial::SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin):
-  mStream(stream){
+    mStream(stream){
     mSerialOutPin = serialOutPin;
     mFlowControlPin = flowControlPin;
     isHardwareSerial = false;

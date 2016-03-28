@@ -99,6 +99,7 @@ TEST_F(SDIBusControllerTest, identifyNoOpt){
   int res = sdiBusPtr->identify('a', &devInfo);
 
   ASSERT_EQ(res, 0);
+  // cout << "ADDR CUSTOM: " << devInfo.addr << "\n";
   ASSERT_STREQ(devInfo.addr, "a");
   ASSERT_STREQ(devInfo.sdiVersion, "13");
   ASSERT_STREQ(devInfo.vendor, "HYDROSNS");
