@@ -29,7 +29,9 @@ SDIBusController::SDIBusController(SDISerial &serial):
 
 /* Public Members */
 void SDIBusController::begin() {
-  cout<<"before mySDISerial.begin()"<<endl;
+  cout<<"setting buffer to read in begin():"<<endl;
+  mySDISerial.setBufferRead();
+  cout<<"before begin"<<endl;
   mySDISerial.begin();
   cout<<"after mySDISerial.begin()"<<endl;
 
