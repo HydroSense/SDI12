@@ -99,11 +99,11 @@ void SDISerial::flush() {
   port. It is the caller's responsibility to set the buffer back to read */
 size_t SDISerial::write(char chr) {
   this->setBufferWrite();
-  //return mStream.write(val);
+  return mStream.write(chr);
 }
 size_t SDISerial::write(char* str) {
   this->setBufferWrite();
-  //return mStream.write(str, size);
+  return mStream.write(str);
 }
 
 #endif
