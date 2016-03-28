@@ -11,8 +11,8 @@ class SDIBusControllerTest: public ::testing::Test {
 public:
   SDIBusControllerTest() {
     pinMode(FLOW_CONTROL_PIN, 0);
-    SDISerial mySDISerial = new SDISerial(Serial1, SERIAL_OUTPUT_PIN, FLOW_CONTROL_PIN);
-    sdiBusPtr = new SDIBusController(mySDISerial);
+    SDISerial *mySDISerial = new SDISerial(Serial1, SERIAL_OUTPUT_PIN, FLOW_CONTROL_PIN);
+    sdiBusPtr = new SDIBusController(*mySDISerial);
   }
 
   ~SDIBusControllerTest() {
