@@ -4,11 +4,8 @@
 #include "SDISerial.hpp"
 #include "SDIBusController.hpp"
 
-#include <iostream>
-using namespace std;
-
 SDISerial::SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin):
-  mStream(stream){
+    mStream(stream){
     mSerialOutPin = serialOutPin;
     mFlowControlPin = flowControlPin;
     isHardwareSerial = false;
@@ -20,7 +17,6 @@ SDISerial::SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin):
 
 void SDISerial::begin() {
   // Begin with configuration 1200 baud, SERIAL_7E1
-  cout<<"In SDISeral.cpp"<<endl;
   if(isHardwareSerial){
     /*
     // Testing typecasting:
@@ -31,9 +27,7 @@ void SDISerial::begin() {
   }
   else{
 //    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
-    cout<<"before cast"<<endl;
     FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
-    cout<<"after cast"<<endl;
     newStream.begin(1200, SERIAL_7E1);
     //((SoftwareSerial) mStream).begin(1200, SERIAL_7E1);
   }

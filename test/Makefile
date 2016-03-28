@@ -212,6 +212,30 @@ home/scimatth7/Arduino/SDI12/SDIRemoteSensor.s:
 .PHONY : home/scimatth7/Arduino/SDI12/SDIRemoteSensor.s
 
 # target to build an object file
+home/scimatth7/Arduino/SDI12/SDISerial.o:
+	$(MAKE) -f CMakeFiles/arduino.dir/build.make CMakeFiles/arduino.dir/home/scimatth7/Arduino/SDI12/SDISerial.o
+	$(MAKE) -f CMakeFiles/fakeserial.dir/build.make CMakeFiles/fakeserial.dir/home/scimatth7/Arduino/SDI12/SDISerial.o
+	$(MAKE) -f CMakeFiles/master.dir/build.make CMakeFiles/master.dir/home/scimatth7/Arduino/SDI12/SDISerial.o
+	$(MAKE) -f CMakeFiles/sdibuscontroller.dir/build.make CMakeFiles/sdibuscontroller.dir/home/scimatth7/Arduino/SDI12/SDISerial.o
+.PHONY : home/scimatth7/Arduino/SDI12/SDISerial.o
+
+# target to preprocess a source file
+home/scimatth7/Arduino/SDI12/SDISerial.i:
+	$(MAKE) -f CMakeFiles/arduino.dir/build.make CMakeFiles/arduino.dir/home/scimatth7/Arduino/SDI12/SDISerial.i
+	$(MAKE) -f CMakeFiles/fakeserial.dir/build.make CMakeFiles/fakeserial.dir/home/scimatth7/Arduino/SDI12/SDISerial.i
+	$(MAKE) -f CMakeFiles/master.dir/build.make CMakeFiles/master.dir/home/scimatth7/Arduino/SDI12/SDISerial.i
+	$(MAKE) -f CMakeFiles/sdibuscontroller.dir/build.make CMakeFiles/sdibuscontroller.dir/home/scimatth7/Arduino/SDI12/SDISerial.i
+.PHONY : home/scimatth7/Arduino/SDI12/SDISerial.i
+
+# target to generate assembly for a file
+home/scimatth7/Arduino/SDI12/SDISerial.s:
+	$(MAKE) -f CMakeFiles/arduino.dir/build.make CMakeFiles/arduino.dir/home/scimatth7/Arduino/SDI12/SDISerial.s
+	$(MAKE) -f CMakeFiles/fakeserial.dir/build.make CMakeFiles/fakeserial.dir/home/scimatth7/Arduino/SDI12/SDISerial.s
+	$(MAKE) -f CMakeFiles/master.dir/build.make CMakeFiles/master.dir/home/scimatth7/Arduino/SDI12/SDISerial.s
+	$(MAKE) -f CMakeFiles/sdibuscontroller.dir/build.make CMakeFiles/sdibuscontroller.dir/home/scimatth7/Arduino/SDI12/SDISerial.s
+.PHONY : home/scimatth7/Arduino/SDI12/SDISerial.s
+
+# target to build an object file
 mock/Arduino.o:
 	$(MAKE) -f CMakeFiles/arduino.dir/build.make CMakeFiles/arduino.dir/mock/Arduino.o
 	$(MAKE) -f CMakeFiles/fakeserial.dir/build.make CMakeFiles/fakeserial.dir/mock/Arduino.o
@@ -338,6 +362,9 @@ help:
 	@echo "... home/scimatth7/Arduino/SDI12/SDIRemoteSensor.o"
 	@echo "... home/scimatth7/Arduino/SDI12/SDIRemoteSensor.i"
 	@echo "... home/scimatth7/Arduino/SDI12/SDIRemoteSensor.s"
+	@echo "... home/scimatth7/Arduino/SDI12/SDISerial.o"
+	@echo "... home/scimatth7/Arduino/SDI12/SDISerial.i"
+	@echo "... home/scimatth7/Arduino/SDI12/SDISerial.s"
 	@echo "... mock/Arduino.o"
 	@echo "... mock/Arduino.i"
 	@echo "... mock/Arduino.s"
