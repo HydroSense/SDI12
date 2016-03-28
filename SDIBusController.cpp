@@ -24,11 +24,14 @@ SDIBusController::SDIBusController(SDISerial &serial):
 
   // put tristate into high impedence mode
   mySDISerial.setBufferRead();
+  cout<<"Set buffer to read"<<endl;
 }
 
 /* Public Members */
 void SDIBusController::begin() {
+  cout<<"before mySDISerial.begin()"<<endl;
   mySDISerial.begin();
+  cout<<"after mySDISerial.begin()"<<endl;
 
   // ensure buffer is in high impedence mode
   mySDISerial.setBufferRead();
