@@ -4,7 +4,7 @@
 #include "SDISerial.hpp"
 #include "SDIBusController.hpp"
 
-SDISerial::SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin):
+SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin):
     mStream(stream){
     mSerialOutPin = serialOutPin;
     mFlowControlPin = flowControlPin;
@@ -27,7 +27,7 @@ void SDISerial::begin() {
   }
   else{
 //    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
-    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
+    HardwareSerial &newStream = static_cast<HardwareSerial &>(mStream);
     newStream.begin(1200, SERIAL_7E1);
     //((SoftwareSerial) mStream).begin(1200, SERIAL_7E1);
   }
@@ -42,7 +42,7 @@ void SDISerial::end() {
     */
   }
   else{
-    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
+    HardwareSerial &newStream = static_cast<HardwareSerial &>(mStream);
     newStream.end();
     //((SoftwareSerial)mStream).end();
   }
@@ -97,7 +97,7 @@ void SDISerial::flush() {
 
 /* This sets the buffer to write, sends the preamble, and writes to the serial
   port. It is the caller's responsibility to set the buffer back to read */
-size_t SDISerial::write(char chr) {
+size_t SDISerial::write(uint8_t chr) {
   this->setBufferWrite();
   return mStream.write(chr);
 }
