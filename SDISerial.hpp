@@ -14,7 +14,7 @@ private:
 
 public:
   /* Constructors for both HardwareSerial and SoftwareSerial */
-  SDISerial(FakeSerial &stream, int serialOutPin, int flowControlPin);
+  SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
 
   /* SDISerial Implementation */
   void begin();
@@ -30,7 +30,7 @@ public:
   void flush();
 
   /* Print Implementation */
-  size_t write(char chr);
+  size_t write(uint8_t);
   size_t write(char* str);
 };
 

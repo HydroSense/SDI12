@@ -1,9 +1,11 @@
 #ifndef __SDI_BUS_CONTROLLER_CPP
 #define __SDI_BUS_CONTROLLER_CPP
 
+/*
 // XXX: remove on product
 #include <iostream>
 using namespace std;
+*/
 
 #include <stdlib.h>
 
@@ -68,7 +70,7 @@ int SDIBusController::addressQuery(char *outAddr) {
       if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
           // TIME OUT
           SDIBusErrno = TIMEOUT;
-          cout << "Failure - no device detected" << endl;
+          /* cout << "Failure - no device detected" << endl; */
           return -1;
       }
       delay(1);
@@ -76,7 +78,7 @@ int SDIBusController::addressQuery(char *outAddr) {
   char newAddr = mySDISerial.read();
   for(int i=0; i<2; i++){
       if(mySDISerial.read() != exp[i]){
-          cout << "Failure" << endl;
+          /* cout << "Failure" << endl; */
           SDIBusErrno = RESPONSE_ERROR;
           return -1;
       }
@@ -90,7 +92,7 @@ int SDIBusController::addressQuery(char *outAddr) {
 
 int SDIBusController::acknowledgeActive(char addr) {
   if (!this->isValidAddress(addr)) {
-    cout<<"Bad address"<<endl;
+    /* cout<<"Bad address"<<endl; */
     SDIBusErrno = BAD_ADDRESS;
     return -1;
   }
@@ -110,7 +112,7 @@ int SDIBusController::acknowledgeActive(char addr) {
       if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
           // TIME OUT - set error variable
           SDIBusErrno = TIMEOUT;
-          cout << "Failure" << endl;
+          /* cout << "Failure" << endl; */
           return -1;
       }
       delay(1);
@@ -121,7 +123,7 @@ int SDIBusController::acknowledgeActive(char addr) {
       if( mySDISerial.read() != exp[i] ){
           // incorrect response - set error variable
           SDIBusErrno = RESPONSE_ERROR;
-          cout << "Failure" << endl;
+          /* cout << "Failure" << endl; */
           return -1;
       }
   }
@@ -146,7 +148,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
     if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
         // TIME OUT - set error variable
         SDIBusErrno = TIMEOUT;
-        cout << "Failure" << endl;
+        /* cout << "Failure" << endl; */
         return -1;
     }
   }
@@ -212,7 +214,7 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
        if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
            // TIME OUT
            SDIBusErrno = TIMEOUT;
-           cout << "Failure - no device detected" << endl;
+           /* cout << "Failure - no device detected" << endl; */
            return -1;
        }
        delay(1);
@@ -231,7 +233,7 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
     char exp[2] = {'\r', '\n'};
     for(int i=0; i<2; i++){
         if(mySDISerial.read() != exp[i]){
-            cout << "Failure" << endl;
+            /* cout << "Failure" << endl; */
             SDIBusErrno = RESPONSE_ERROR;
             return -1;
         }
@@ -338,7 +340,7 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
       if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
           // TIME OUT - set error variable
           SDIBusErrno = TIMEOUT;
-          cout << "Failure - timeout" << endl;
+          /* cout << "Failure - timeout" << endl; */
           return -1;
       }
       delay(1);
@@ -349,7 +351,7 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
       if( mySDISerial.read() != exp[i] ){
           // incorrect response - set error variable
           SDIBusErrno = RESPONSE_ERROR;
-          cout << "Failure - response error" << endl;
+          /* cout << "Failure - response error" << endl; */
           return -1;
       }
   }

@@ -1,5 +1,5 @@
 /*
-   Example sketch for testing a sensor is active.
+   Example sketch for testing the addressQuery function.
    Colby Rome 3-30-16
 */
 
@@ -12,6 +12,8 @@ SDIBusController *SDIBus;
 
 void setup(){
     // instantiate SDISerial instance with hardware Serial1
+    pinMode(FLOW_CONTROL_PIN, OUTPUT);
+    //pinMode(FLOW_CONTROL_PIN, OUTPUT);
     SDISerial *mySDISerial = new SDISerial(Serial1, SERIAL_OUTPUT_PIN, FLOW_CONTROL_PIN);
 
     // instantiate SDIBus controller, passing in hardware Serial1 as argument
@@ -22,12 +24,14 @@ void setup(){
 }
 
 void loop(){
-    int res = SDIBus->acknowledgeActive('0');
+    char readAddress;
+    int res = SDIBus->addressQuery(&readAddress);
     if(res != 0){
         Serial.println("Error: didn't respond");
     }
     else{
-        Serial.println("Success.");
+        Serial.print("Success. read:");
+        Serial.println(readAddress);
     }
 
     delay(1000);
