@@ -6,6 +6,7 @@
 
 SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin):
     mStream(stream){
+      //pinMode(flowControlPin, OUTPUT);
     mSerialOutPin = serialOutPin;
     mFlowControlPin = flowControlPin;
     isHardwareSerial = false;
@@ -57,9 +58,9 @@ void SDISerial::sendPreamble() {
     this->end();
 
     pinMode(mSerialOutPin, OUTPUT);
-    digitalWrite(mSerialOutPin, 1);
-    delay(SDI_BREAK_TIME_MS);
     digitalWrite(mSerialOutPin, 0);
+    delay(SDI_BREAK_TIME_MS);
+    digitalWrite(mSerialOutPin, 1);
     delay(SDI_MARKING_TIME_MS);
 
     // re-enable mSerial
