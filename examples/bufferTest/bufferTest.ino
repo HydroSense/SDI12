@@ -30,11 +30,12 @@ void setup(){
     // For debugging to the computer
     Serial.begin(9600);
 
+
 }
 
 void loop(){
-    digitalWrite(FLOW_CONTROL_PIN, LOW); // LOW -> write mode
-    Serial1.write('0'); // write is non-blocking. Sends data over ISR
+      digitalWrite(FLOW_CONTROL_PIN, LOW); // LOW -> read mode
+    Serial1.write('1'); // write is non-blocking. Sends data over ISR
 
     // Wait until we've written everything.
     // Doesn't have an FPU. 1/1200 is 833.3 (repeating) microseconds per BIT
@@ -43,18 +44,18 @@ void loop(){
     delayMicroseconds(1 * USEC_PER_BYTE); // Delay 1 byte
 
     // Back to read mode
-    digitalWrite(FLOW_CONTROL_PIN, HIGH); //
+    digitalWrite(FLOW_CONTROL_PIN, HIGH); // HIGH -> write mode
 
     // The following should NOT appear, because the buffer is set to READ:
     Serial1.write('1');
 
-    delay(1000);
+    delay(100);
 }
 
 void setBufferWrite(){
-    digitalWrite(FLOW_CONTROL_PIN, 0);
+    digitalWrite(FLOW_CONTROL_PIN, LOW);
 }
 
 void setBufferRead(){
-    digitalWrite(FLOW_CONTROL_PIN, 1);
+    digitalWrite(FLOW_CONTROL_PIN, HIGH);
 }
