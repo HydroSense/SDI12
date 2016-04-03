@@ -23,7 +23,7 @@ None.
 0 if the device is not busy.
 
 
-### `void SDIRemoteSensor::changeAddress(char old, char new)`
+### `void SDIRemoteSensor::changeAddress(char newAddress)`
 Changes a device address from `old` to `new`.
 
 #### Arguments

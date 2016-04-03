@@ -1,33 +1,28 @@
-//#ifndef __SDI_REMOTE_SENSOR_HPP
-#if 0
-#define __SDI_REMOTE_SENSOR_HPP
+#ifndef SDI_REMOTE_SENSOR_H
+#define SDI_REMOTE_SENSOR_H
 
-#include "SDIBusController.hpp"
+#include "SDIStream.hpp"
 
 class SDIRemoteSensor {
 private:
-  char mAddr;
-  unsigned long mReadyTimestamp;
-
-  int mAvailable;
-  int mBusy;
-  float mValues[10];
-
+  SDIStream& mStream;
+  char mAddress;
 public:
-  SDIRemoteSensor(char addr);
+  SDIRemoteSensor(SDIStream& stream, char address);
 
-  // control functions
-  int changeAddress(char newAddr);
-  char getAddress(void);
+  // status functions
+  int busy();
+  static char querySensorAddress();
 
-  // measurement functions
-  int available(void);
-  int refresh(void);
-  int refresh(int altno);
+  // modification functions
+  void changeAddress(char newAddress);
 
-  // functions to get out data
-  const float* values(void);
-  const float value(int index);
-};
+  // measurement triggers
+  int startMeasurement();
+  int startAltMeasurement(int altNo);
+
+  // getters
+  float* getData();
+}
 
 #endif
