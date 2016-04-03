@@ -1,3 +1,5 @@
+#if 0
+
 #include <Arduino.h>
 
 #include "SDIStream.hpp"
@@ -64,3 +66,5 @@ float* SDIRemoteSensor::getData() {
     return mData;
   }
 }
+
+#endif

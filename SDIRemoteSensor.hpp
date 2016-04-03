@@ -1,3 +1,5 @@
+#if 0
+
 #ifndef SDI_REMOTE_SENSOR_H
 #define SDI_REMOTE_SENSOR_H
 
@@ -29,5 +31,7 @@ public:
   // getters
   float* getData();
 }
+
+#endif
 
 #endif
