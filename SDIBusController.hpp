@@ -27,38 +27,27 @@ enum SDIBusError {
 extern SDIBusError SDIBusErrno;
 
 struct SDIDeviceIdentification{
-  //TODO Initialize all char arrays to null values
-  char addr[2] = {};
-  char sdiVersion[3] = {};
-  char vendor[9] = {};
-  char modelNum[7] = {};
-  
-  char sensorVersion[4] = {};
-  char optional[14] = {};
+  char addr[2] = {0};
+  char sdiVersion[3] = {0};
+  char vendor[9] = {0};
+  char modelNum[7] = {0};
+
+  char sensorVersion[4] = {0};
+  char optional[14] = {0};
 };
 
 class SDIBusController {
 //  friend class SDIRemoteSensor;
 private:
   SDISerial &mySDISerial;
-  /*
-  int mSerialOutputPin;
-  int mFlowControlPin;
-  */
 
   bool isValidAddress(char addr);
 
 public:
-//  SDIBusController(SDIStream& serial, int serialOutputPin, int flowControlPin);
   SDIBusController(SDISerial &serial);
 
   void begin(void);
   void end(void);
-
-
-
-//  int register(SDIRemoteSensor& sensor);
-//  void eventLoop(void);
 
   int addressQuery(char *outAddr); // Use when there is only 1 sensor connected
   int acknowledgeActive(char addr);
