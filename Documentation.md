@@ -1,39 +1,17 @@
 # SDI-12 Arduino Library
 
-# `SDI12Master`
+# `SDIRemoteSensor`
 Management class for hardware SDI-12 master mode.  Queries slave devices to get
 data out of them.
 
-### `SDI12Master::SDI12Master(int pin)`
-Initializes an SDI-12 master device.
+### `SDIRemoteSensor::SDIRemoteSensor(SDIStream& stream, char address)`
+Initializes and SDI-12 slave sensor device.
 
 #### Arguments
-  * **pin**: Digital I/O pin used for flow control.
+  * **stream**: SDIStream that handles the communication
+  * **address**: SDI address
 
-
-### `int SDI12Master::active()`
-Checks to see if this instance of SDI12Master has started.
-
-#### Arguments
-None.
-
-#### Return Value
-1 if the device is active.
-
-0 if the device is inactive.
-
-
-### `void SDI12Master::begin()`
-Starts the object, activates serial hardware, and binds the flow control pin.
-
-#### Arguments
-None.
-
-#### Return Value
-None.
-
-
-### `int SDI12Master::busy()`
+### `int SDIRemoteSensor::busy()`
 Checks to see if the device is in the middle of a measurement.
 
 #### Arguments
@@ -45,7 +23,7 @@ None.
 0 if the device is not busy.
 
 
-### `void SDI12Master::changeAddress(char old, char new)`
+### `void SDIRemoteSensor::changeAddress(char old, char new)`
 Changes a device address from `old` to `new`.
 
 #### Arguments
@@ -57,61 +35,41 @@ None.
 
 
 
-### `void SDI12Master::end()`
-Stops the object, electrically disconnects master from the control line.
+### `int SDIRemoteSensor::startMeasurement()`
+Start an asynchronous measurement.
 
 #### Arguments
 None.
 
 #### Return Value
-None.
+If <0, error
+If >=0, the number of seconds until the measurement is ready
 
-
-### `int SDI12Master::read(char* buffer, size_t size)`
-Reads one measurement value from the SDI-12 device into the buffer.
-
-#### Arguments
-  * **data**: pointer to a buffer to store the data
-  * **size**: size, in bytes, of the provided buffer
-
-#### Return Value
-If <0, then the measurement isn't ready yet.
-
-If >=0, then the number of bytes read.
-
-
-### `int SDI12Master::readAll(char* buffer, size_t size)`
-Reads all measurement values from the SDI-12 device into the buffer.
+### `int SDIRemoteSensor::startAltMeasurement(int altNo)`
+Starts an asynchronous alternative measurement.
 
 #### Arguments
-  * **data**: pointer to a buffer to store the data
-  * **size**: size, in bytes, of the provided buffer
+  * **altNo**: alternative index number (1-9)
 
-#### Return Value
-If <0, then the measurement isn't ready yet.
-
-If >=0, then the number of bytes read.
-
-
-### `int SDI12Master::startMeasurement(char address)`
-Starts serial measurement with device.
-
-#### Arguments
-  * **address**: target address of device you wish to measure
-
-#### Return Value
-Integer, number of seconds it is expected to take until the measurement is ready.
-
-
-### `void SDI12Master::wake()`
-Sends a break command which wakes all devices on the line.  Function call should
-block for 12ms before returning.
+### `float* SDIRemoteSensor::getData()`
+Gets array of measurements.
 
 #### Arguments
 None.
 
 #### Return Value
+Returns `NULL` if the sensor isn't ready.
+
+
+
+### `static char SDIRemoteSensor::querySensorAddress()`
+Queries the bus to see if there is a sensor on it.
+
+#### Arguments
 None.
+
+#### Return Value
+Returns the character of the address or **'\0'** if no sensor was found
 
 
 
