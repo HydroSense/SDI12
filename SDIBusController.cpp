@@ -60,6 +60,7 @@ int SDIBusController::addressQuery(char *outAddr) {
   mySDISerial.sendPreamble();
   mySDISerial.write('?');
   mySDISerial.write('!');
+  mySDISerial.flush();
   mySDISerial.setBufferRead();
 
   // expected: addr, <CR>, <LF>
@@ -67,14 +68,15 @@ int SDIBusController::addressQuery(char *outAddr) {
 
   int numDelays = 0;
   while( mySDISerial.available() < 3){
-      if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
+      if( ++numDelays == SDI_SENSOR_MAXIMUM_TIME_MS ){
           // TIME OUT
           SDIBusErrno = TIMEOUT;
           /* cout << "Failure - no device detected" << endl; */
-          return -1;
+          return -2;
       }
       delay(1);
   }
+
   char newAddr = mySDISerial.read();
   for(int i=0; i<2; i++){
       if(mySDISerial.read() != exp[i]){
@@ -83,7 +85,6 @@ int SDIBusController::addressQuery(char *outAddr) {
           return -1;
       }
   }
-
   *outAddr = newAddr; // write new address
 
   SDIBusErrno = OK;
@@ -205,6 +206,7 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
        mySDISerial.write((char) (altno + '0'));
     }
     mySDISerial.write('!');
+    mySDISerail.flush(); // We should consider moving this to setBufferRead()******
     mySDISerial.setBufferRead();
 
     // expected: atttnn<CR><LF>
@@ -266,6 +268,7 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
     mySDISerial.write('D');
     mySDISerial.write(iChr);
     mySDISerial.write('!');
+    mySDISerial.flush();
     mySDISerial.setBufferRead();
 
     // ensure the response address is correct

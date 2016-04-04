@@ -9,7 +9,7 @@
 // protocol timing constants
 #define SDI_BREAK_TIME_MS           12
 #define SDI_MARKING_TIME_MS         9
-#define SDI_SENSOR_RESPONSE_TIME_MS 15
+#define SDI_SENSOR_RESPONSE_TIME_MS 15 //???? this is time for initial response... tricky
 #define SDI_SENSOR_MAXIMUM_TIME_MS  780
 
 //class SDIRemoteSensor{};
@@ -32,7 +32,7 @@ struct SDIDeviceIdentification{
   char sdiVersion[3] = {};
   char vendor[9] = {};
   char modelNum[7] = {};
-  
+
   char sensorVersion[4] = {};
   char optional[14] = {};
 };
