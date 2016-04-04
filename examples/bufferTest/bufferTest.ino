@@ -36,12 +36,9 @@ void setup(){
 void loop(){
       digitalWrite(FLOW_CONTROL_PIN, LOW); // LOW -> read mode
     Serial1.write('1'); // write is non-blocking. Sends data over ISR
+    Serial1.flush();
 
     // Wait until we've written everything.
-    // Doesn't have an FPU. 1/1200 is 833.3 (repeating) microseconds per BIT
-    // Therefore, each character is 7 bits + 1 start bit + 1 parity bit + 1 stop bit
-    // 10 bits per byte sent, or 8333.3 microseconds PER BYTE
-    delayMicroseconds(1 * USEC_PER_BYTE); // Delay 1 byte
 
     // Back to read mode
     digitalWrite(FLOW_CONTROL_PIN, HIGH); // HIGH -> write mode
