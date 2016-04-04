@@ -1,11 +1,14 @@
 /*
    Sanity check for the tri-state buffer.
+   Colby Rome 3-30-16
 */
 
 //#include "SDI.h"
 
 #define SERIAL_OUTPUT_PIN 1
 #define FLOW_CONTROL_PIN A3
+
+#define USEC_PER_BYTE 8333
 
 //SDIBusController *SDIBus;
 
@@ -27,26 +30,29 @@ void setup(){
     // For debugging to the computer
     Serial.begin(9600);
 
+
 }
 
 void loop(){
-    pinMode(FLOW_CONTROL_PIN, OUTPUT);
-    digitalWrite(FLOW_CONTROL_PIN, LOW); // write mode
-    delay(50);
-    Serial1.write('0');
-    delay(50);
-    digitalWrite(FLOW_CONTROL_PIN, HIGH); // read mode???????????fuck
+      digitalWrite(FLOW_CONTROL_PIN, LOW); // LOW -> read mode
+    Serial1.write('1'); // write is non-blocking. Sends data over ISR
+    Serial1.flush();
+
+    // Wait until we've written everything.
+
+    // Back to read mode
+    digitalWrite(FLOW_CONTROL_PIN, HIGH); // HIGH -> write mode
 
     // The following should NOT appear, because the buffer is set to READ:
     Serial1.write('1');
 
-    delay(1000);
+    delay(100);
 }
 
 void setBufferWrite(){
-    digitalWrite(FLOW_CONTROL_PIN, 0);
+    digitalWrite(FLOW_CONTROL_PIN, LOW);
 }
 
 void setBufferRead(){
-    digitalWrite(FLOW_CONTROL_PIN, 1);
+    digitalWrite(FLOW_CONTROL_PIN, HIGH);
 }
