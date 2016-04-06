@@ -2,6 +2,7 @@
 #define __SDI_HARDWARE_SERIAL_HPP
 
 #include <Arduino.h>
+#include <Stream.h>
 
 #include "SDIStream.hpp"
 
@@ -14,24 +15,20 @@ private:
 
 public:
   /* Constructors for both HardwareSerial and SoftwareSerial */
-  SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
+  SDISerial(Stream &stream, int serialOutPin, int flowControlPin);
 
-  /* SDISerial Implementation */
-  void begin();
-  void end();
-  void sendPreamble();
-  void setBufferRead();
-  void setBufferWrite();
+  /* SDIStream Implementation */
+  virtual void sendPreamble();
+  virtual void setBufferRead();
+  virtual void setBufferWrite();
 
-  /* Stream Implementation */
-  int available();
-  int read();
-  int peek();
-  void flush();
+  virtual int available();
+  virtual int read();
+  virtual int peek();
+  virtual void flush();
 
-  /* Print Implementation */
-  size_t write(uint8_t);
-  size_t write(char* str);
+  virtual int write(char c);
+  virtual int write(char* str);
 };
 
 #endif

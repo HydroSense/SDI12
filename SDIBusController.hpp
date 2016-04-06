@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 
-#include "SDIStream.hpp"
 #include "SDISerial.hpp"
 
 // protocol timing constants
@@ -39,33 +38,30 @@ struct SDIDeviceIdentification{
 class SDIBusController {
 //  friend class SDIRemoteSensor;
 private:
-  SDISerial &mySDISerial;
+  SDIStream &mySDIStream;
 
   bool isValidAddress(char addr);
 
 public:
-  SDIBusController(SDISerial &serial);
+  SDIBusController(SDIStream &serial);
 
-  void begin(void);
-  void end(void);
+  virtual int addressQuery(char *outAddr); // Use when there is only 1 sensor connected
+  virtual int acknowledgeActive(char addr);
+  virtual int identify(char addr, struct SDIDeviceIdentification* devInfo);
 
-  int addressQuery(char *outAddr); // Use when there is only 1 sensor connected
-  int acknowledgeActive(char addr);
-  int identify(char addr, struct SDIDeviceIdentification* devInfo);
+  virtual int refresh(char addr, int altno, int *waitTime, int *numExpected);
+  virtual int getData(char addr, float* buffer, int numExpected);
+  virtual int changeAddress(char oldAddr, char newAddr);
 
-  int refresh(char addr, int altno, int *waitTime, int *numExpected);
-  int getData(char addr, float* buffer, int numExpected);
-  int changeAddress(char oldAddr, char newAddr);
+  virtual int respondToAcknowledgeActive(char addr);
 
-  int respondToAcknowledgeActive(char addr);
+  //virtual int respondToSendIdentificationNoOpt(char addr);
+  //virtual int respondToSendIdentificationPartialOpt(char addr);
+  //virtual int respondToSendIdentificationFullOpt(char addr);
 
-  int respondToSendIdentificationNoOpt(char addr);
-  int respondToSendIdentificationPartialOpt(char addr);
-  int respondToSendIdentificationFullOpt(char addr);
-
-  int respondToChangeAddress(char addr);
-  int respondToAddressQuery(char addr);
-  int respondToRefresh(char addr, int altno);
+  virtual int respondToChangeAddress(char addr);
+  virtual int respondToAddressQuery(char addr);
+  virtual int respondToRefresh(char addr, int altno);
 };
 
 #endif

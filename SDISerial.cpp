@@ -4,7 +4,9 @@
 #include "SDISerial.hpp"
 #include "SDIBusController.hpp"
 
-SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin):
+#include <string.h>
+
+SDISerial::SDISerial(Stream &stream, int serialOutPin, int flowControlPin):
     mStream(stream){
       //pinMode(flowControlPin, OUTPUT);
     mSerialOutPin = serialOutPin;
@@ -16,55 +18,18 @@ SDISerial::SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPi
 // SDISerial Implementation
 //
 
-void SDISerial::begin() {
-  // Begin with configuration 1200 baud, SERIAL_7E1
-  if(isHardwareSerial){
-    /*
-    // Testing typecasting:
-    HardwareSerial &newStream = dynamic_cast<HardwareSerial &>(mStream);
-    newStream.begin(1200, SERIAL_7E1);
-    //((HardwareSerial) mStream).begin(1200, SERIAL_7E1);
-    */
-  }
-  else{
-//    FakeSerial &newStream = static_cast<FakeSerial &>(mStream);
-    HardwareSerial &newStream = static_cast<HardwareSerial &>(mStream);
-    newStream.begin(1200, SERIAL_7E1);
-    //((SoftwareSerial) mStream).begin(1200, SERIAL_7E1);
-  }
-}
-
-void SDISerial::end() {
-  if(isHardwareSerial){
-    /*
-    HardwareSerial &newStream = dynamic_cast<HardwareSerial &>(mStream);
-    newStream.end();
-    //((HardwareSerial)mStream).end();
-    */
-  }
-  else{
-    HardwareSerial &newStream = static_cast<HardwareSerial &>(mStream);
-    newStream.end();
-    //((SoftwareSerial)mStream).end();
-  }
-}
-
 void SDISerial::sendPreamble() {
   /*
   Sends the required preamble according to the SDI-12 specification
   */
 
-    // Stop mSerial
-    this->end();
+  // TODO(colin): figure out to start and stop interface
 
-    pinMode(mSerialOutPin, OUTPUT);
-    digitalWrite(mSerialOutPin, 0);
-    delay(SDI_BREAK_TIME_MS);
-    digitalWrite(mSerialOutPin, 1);
-    delay(SDI_MARKING_TIME_MS);
-
-    // re-enable mSerial
-    this->begin();
+  pinMode(mSerialOutPin, OUTPUT);
+  digitalWrite(mSerialOutPin, 0);
+  delay(SDI_BREAK_TIME_MS);
+  digitalWrite(mSerialOutPin, 1);
+  delay(SDI_MARKING_TIME_MS);
 }
 
 void SDISerial::setBufferWrite(){
@@ -98,13 +63,25 @@ void SDISerial::flush() {
 
 /* This sets the buffer to write, sends the preamble, and writes to the serial
   port. It is the caller's responsibility to set the buffer back to read */
-size_t SDISerial::write(uint8_t chr) {
+int SDISerial::write(char chr) {
   this->setBufferWrite();
-  return mStream.write(chr);
+
+  // TODO(colin): allow for hardware serial
+  int out = mStream.write((const uint8_t*)&chr, sizeof(chr));
+
+  this->setBufferRead();
+
+  return out;
 }
-size_t SDISerial::write(char* str) {
+int SDISerial::write(char* str) {
   this->setBufferWrite();
-  return mStream.write(str);
+
+  // TODO(colin): allow for enabling and disabling hardware serial
+  int out = mStream.write((const uint8_t*)str, strlen(str));
+
+  this->setBufferRead();
+
+  return out;
 }
 
 #endif
