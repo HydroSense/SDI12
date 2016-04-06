@@ -8,16 +8,19 @@
 
 class SDISerial : public SDIStream {
 private:
-  Stream &mStream;
+  HardwareSerial &mSerial;
   int mSerialOutPin;
   int mFlowControlPin;
   bool isHardwareSerial;
 
 public:
   /* Constructors for both HardwareSerial and SoftwareSerial */
-  SDISerial(Stream &stream, int serialOutPin, int flowControlPin);
+  SDISerial(HardwareSerial &stream, int serialOutPin, int flowControlPin);
 
   /* SDIStream Implementation */
+  virtual void begin();
+  virtual void end();
+
   virtual void sendPreamble();
   virtual void setBufferRead();
   virtual void setBufferWrite();

@@ -6,9 +6,12 @@
 
 #include <string.h>
 
-SDISerial::SDISerial(Stream &stream, int serialOutPin, int flowControlPin):
-    mStream(stream){
-      //pinMode(flowControlPin, OUTPUT);
+SDISerial::SDISerial(HardwareSerial &serial, int serialOutPin, int flowControlPin):
+    mSerial(serial){
+    // set the pin mode of the serial output
+    pinMode(flowControlPin, OUTPUT);
+
+
     mSerialOutPin = serialOutPin;
     mFlowControlPin = flowControlPin;
     isHardwareSerial = false;
@@ -17,6 +20,13 @@ SDISerial::SDISerial(Stream &stream, int serialOutPin, int flowControlPin):
 //
 // SDISerial Implementation
 //
+
+void SDISerial::begin() {
+  mSerial.begin(9600, SERIAL_7E1);
+}
+void SDISerial::end() {
+  mSerial.end();
+}
 
 void SDISerial::sendPreamble() {
   /*
@@ -33,29 +43,25 @@ void SDISerial::sendPreamble() {
 }
 
 void SDISerial::setBufferWrite(){
-    digitalWrite(mFlowControlPin, 1);
+  digitalWrite(mFlowControlPin, 1);
 }
 
 void SDISerial::setBufferRead(){
   // LOW is READ ******
-    digitalWrite(mFlowControlPin, 0);
+  digitalWrite(mFlowControlPin, 0);
 }
-
-//
-// Stream Implementation
-//
 
 int SDISerial::available() {
-  return mStream.available();
+  return mSerial.available();
 }
 int SDISerial::read() {
-  return mStream.read();
+  return mSerial.read();
 }
 int SDISerial::peek() {
-  return mStream.peek();
+  return mSerial.peek();
 }
 void SDISerial::flush() {
-  mStream.flush();
+  mSerial.flush();
 }
 
 //
@@ -68,7 +74,7 @@ int SDISerial::write(char chr) {
   this->setBufferWrite();
 
   // TODO(colin): allow for hardware serial
-  int out = mStream.write((const uint8_t*)&chr, sizeof(chr));
+  int out = mSerial.write((const uint8_t*)&chr, sizeof(chr));
 
   this->setBufferRead();
 
@@ -78,7 +84,7 @@ int SDISerial::write(char* str) {
   this->setBufferWrite();
 
   // TODO(colin): allow for enabling and disabling hardware serial
-  int out = mStream.write((const uint8_t*)str, strlen(str));
+  int out = mSerial.write((const uint8_t*)str, strlen(str));
 
   this->setBufferRead();
 
