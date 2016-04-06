@@ -22,7 +22,7 @@ SDISerial::SDISerial(HardwareSerial &serial, int serialOutPin, int flowControlPi
 //
 
 void SDISerial::begin() {
-  mSerial.begin(9600, SERIAL_7E1);
+  mSerial.begin(1200, SERIAL_7E1);
 }
 void SDISerial::end() {
   mSerial.end();
@@ -35,11 +35,13 @@ void SDISerial::sendPreamble() {
 
   // TODO(colin): figure out to start and stop interface
 
+  this->end();
   pinMode(mSerialOutPin, OUTPUT);
   digitalWrite(mSerialOutPin, 0);
   delay(SDI_BREAK_TIME_MS);
   digitalWrite(mSerialOutPin, 1);
   delay(SDI_MARKING_TIME_MS);
+  this->begin();
 }
 
 void SDISerial::setBufferWrite(){
@@ -71,22 +73,19 @@ void SDISerial::flush() {
 /* This sets the buffer to write, sends the preamble, and writes to the serial
   port. It is the caller's responsibility to set the buffer back to read */
 int SDISerial::write(char chr) {
-  this->setBufferWrite();
 
   // TODO(colin): allow for hardware serial
-  int out = mSerial.write((const uint8_t*)&chr, sizeof(chr));
+//  int out = mSerial.write((const uint8_t*)&chr, sizeof(chr));
+  int out = mSerial.write(chr);
 
-  this->setBufferRead();
 
   return out;
 }
 int SDISerial::write(char* str) {
-  this->setBufferWrite();
 
   // TODO(colin): allow for enabling and disabling hardware serial
   int out = mSerial.write((const uint8_t*)str, strlen(str));
 
-  this->setBufferRead();
 
   return out;
 }

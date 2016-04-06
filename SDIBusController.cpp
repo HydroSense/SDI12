@@ -302,7 +302,7 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
       chr = '\0';
     }
   }
-  //return 0;
+  return 0;
 }
 
 int SDIBusController::changeAddress(char oldAddr, char newAddr) {
