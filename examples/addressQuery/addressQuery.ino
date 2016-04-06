@@ -27,10 +27,11 @@ void loop(){
     char readAddress;
     int res = SDIBus->addressQuery(&readAddress);
     if(res != 0){
-        Serial.println("Error: didn't respond");
+        Serial.print("Error: didn't respond: received ");
+        Serial.println(res);
     }
     else{
-        Serial.print("Success. read:");
+        Serial.print("Success. read address:");
         Serial.println(readAddress);
     }
 

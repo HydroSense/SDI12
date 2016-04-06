@@ -40,6 +40,7 @@ int SDIBusController::addressQuery(char *outAddr) {
   mySDIStream.sendPreamble();
   mySDIStream.write('?');
   mySDIStream.write('!');
+  mySDIStream.flush();
   mySDIStream.setBufferRead();
 
   // expected: addr, <CR>, <LF>
@@ -51,7 +52,7 @@ int SDIBusController::addressQuery(char *outAddr) {
           // TIME OUT
           SDIBusErrno = TIMEOUT;
           /* cout << "Failure - no device detected" << endl; */
-          return -1;
+          return -2;
       }
       delay(1);
   }
@@ -63,7 +64,6 @@ int SDIBusController::addressQuery(char *outAddr) {
           return -1;
       }
   }
-
   *outAddr = newAddr; // write new address
 
   SDIBusErrno = OK;
@@ -82,6 +82,7 @@ int SDIBusController::acknowledgeActive(char addr) {
   mySDIStream.sendPreamble();
   mySDIStream.write(addr);
   mySDIStream.write('!');
+  mySDIStream.flush();
   mySDIStream.setBufferRead();
 
   // expected: sensor addr, <CR>, <LF>
@@ -120,6 +121,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
   mySDIStream.write(addr);
   mySDIStream.write('I');
   mySDIStream.write('!');
+  mySDIStream.flush();
 
   mySDIStream.setBufferRead();
 
@@ -174,6 +176,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
 }
 
 int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpected) {
+  // Set altno to -1 for 'regular' refresh
   if (!this->isValidAddress(addr)) {
     SDIBusErrno = BAD_ADDRESS;
     return -1;
@@ -187,6 +190,7 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
        mySDIStream.write((char) (altno + '0'));
     }
     mySDIStream.write('!');
+    mySDIStream.flush();
     mySDIStream.setBufferRead();
 
     // expected: atttnn<CR><LF>
@@ -195,6 +199,7 @@ int SDIBusController::refresh(char addr, int altno, int* waitTime, int* numExpec
     while( mySDIStream.available() < 8){
        if( ++numDelays == SDI_SENSOR_RESPONSE_TIME_MS ){
            // TIME OUT
+           //Serial.println("TIMEOUT in refresh");
            SDIBusErrno = TIMEOUT;
            /* cout << "Failure - no device detected" << endl; */
            return -1;
@@ -247,6 +252,7 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
     mySDIStream.write('D');
     mySDIStream.write(iChr);
     mySDIStream.write('!');
+    mySDIStream.flush();
     mySDIStream.setBufferRead();
 
     // ensure the response address is correct
@@ -296,6 +302,7 @@ int SDIBusController::getData(char addr, float* buffer, int numExpected) {
       chr = '\0';
     }
   }
+  //return 0;
 }
 
 int SDIBusController::changeAddress(char oldAddr, char newAddr) {
@@ -311,6 +318,7 @@ int SDIBusController::changeAddress(char oldAddr, char newAddr) {
   mySDIStream.write('A');
   mySDIStream.write(newAddr);
   mySDIStream.write('!');
+  mySDIStream.flush();
   mySDIStream.setBufferRead();
 
   // expected: new sensor addr, <CR>, <LF>

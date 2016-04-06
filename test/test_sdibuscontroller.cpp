@@ -11,6 +11,7 @@ using ::testing::AtLeast;
 using ::testing::_;
 using ::testing::Matcher;
 using ::testing::DefaultValue;
+using ::testing::AnyNumber;
 
 #define SERIAL_OUTPUT_PIN 10
 #define FLOW_CONTROL_PIN 13
@@ -38,28 +39,40 @@ public:
   }
 
   void transactionSequence(const char* out, const char* in) {
-    InSequence sequence;
+    EXPECT_CALL(mockArduino, delay(_))
+      .Times(AnyNumber());
 
-    EXPECT_CALL(mockSDIStream, setBufferWrite());
-    EXPECT_CALL(mockSDIStream, sendPreamble());
+    {
+      InSequence sequence;
 
-    for (int i=0; out[i] != '\0'; i++) {
-      EXPECT_CALL(mockSDIStream, write(out[i]));
-    }
+      EXPECT_CALL(mockSDIStream, setBufferWrite());
+      EXPECT_CALL(mockSDIStream, sendPreamble());
 
-    EXPECT_CALL(mockSDIStream, setBufferRead());
+      for (int i=0; out[i] != '\0'; i++) {
+        EXPECT_CALL(mockSDIStream, write(out[i]));
+      }
 
-    // can interweave available with read functions now
-    for (int i=0; in[i] != '\0'; i++) {
-      EXPECT_CALL(mockSDIStream, available())
-        .WillRepeatedly(Return(strlen(in)-i));
+      EXPECT_CALL(mockSDIStream, flush());
+      EXPECT_CALL(mockSDIStream, setBufferRead());
 
-      EXPECT_CALL(mockSDIStream, read())
-        .WillOnce(Return(in[i]));
+      // if there is no input string, then available will return 0
+      if (strlen(in) == 0) {
+        EXPECT_CALL(mockSDIStream, available())
+          .WillRepeatedly(Return(0));
+      }
+      for (int i=0; in[i] != '\0'; i++) {
+        EXPECT_CALL(mockSDIStream, available())
+          .WillRepeatedly(Return(strlen(in)-i));
+
+        EXPECT_CALL(mockSDIStream, read())
+          .WillOnce(Return(in[i]));
+      }
     }
   }
 
   void noTransactionSequence() {
+    EXPECT_CALL(mockArduino, delay(_))
+      .Times(0);
     EXPECT_CALL(mockSDIStream, setBufferWrite())
       .Times(0);
     EXPECT_CALL(mockSDIStream, setBufferRead())
@@ -70,6 +83,8 @@ public:
     EXPECT_CALL(mockSDIStream, write(Matcher<char>(_)))
       .Times(0);
     EXPECT_CALL(mockSDIStream, write(Matcher<char*>(_)))
+      .Times(0);
+    EXPECT_CALL(mockSDIStream, flush())
       .Times(0);
   }
 };

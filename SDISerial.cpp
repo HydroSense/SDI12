@@ -33,11 +33,12 @@ void SDISerial::sendPreamble() {
 }
 
 void SDISerial::setBufferWrite(){
-    digitalWrite(mFlowControlPin, 0);
+    digitalWrite(mFlowControlPin, 1);
 }
 
 void SDISerial::setBufferRead(){
-    digitalWrite(mFlowControlPin, 1);
+  // LOW is READ ******
+    digitalWrite(mFlowControlPin, 0);
 }
 
 //
