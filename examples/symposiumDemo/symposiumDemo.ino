@@ -1,6 +1,7 @@
 /*
-   Example sketch for testing the refresh and getData functions
-   Colby Rome 4-4-16
+   Example sketch sending a stream of data to a python script to graph.
+   Colby Rome 4-6-16
+
 */
 
 #include "SDI.h"
@@ -36,15 +37,8 @@ void loop(){
 
     int res = SDIBus->refresh(addr, altno, &waitTime, &numExpected);
     if(res != 0){
-        Serial.print("Error: didn't respond: received ");
-        Serial.println(res);
     }
     else{
-        Serial.print("Success. read waitTime:");
-        Serial.println(waitTime);
-        Serial.print("read numExpected: ");
-        Serial.println(numExpected);
-        Serial.flush();
         delay(1000);
         float buffer[numExpected];
         res = SDIBus->getData(addr, buffer, numExpected);
@@ -53,13 +47,15 @@ void loop(){
           Serial.println(res);
         }
         else{
-          Serial.println("Success. Read: ");
-          Serial.println(buffer[0]);
-          Serial.println(buffer[1]);
-          Serial.println(buffer[2]);
+          for(int i=0; i<numExpected; i++){
+            if(buffer[i] >= 0){
+              Serial.print('+');
+            }
+            Serial.print(buffer[i]);
+          }
+          Serial.print("\r\n");
+
         }
-
     }
-
     delay(1000);
 }
