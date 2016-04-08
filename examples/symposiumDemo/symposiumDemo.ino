@@ -5,6 +5,7 @@
 */
 
 #include "SDI.h"
+#include <Wire.h>
 
 #define SERIAL_OUTPUT_PIN 1
 #define FLOW_CONTROL_PIN A3
@@ -13,6 +14,22 @@ SDIBusController *SDIBus;
 char addr;
 
 void setup(){
+  pinMode(5, OUTPUT);
+  digitalWrite(5, HIGH);
+
+  Wire.begin();
+
+  Wire.beginTransmission(0b1110000);
+  Wire.write(byte(0x03));
+  Wire.write(0b00000000);  //Sets all pins to output
+  Wire.endTransmission();
+
+  Wire.beginTransmission(0b1110000);
+  Wire.write(byte(0x01));
+  Wire.write(0b11111111);  //Sets appropriate pins to high/low
+  Wire.endTransmission();
+
+
     // instantiate SDISerial instance with hardware Serial1
     pinMode(FLOW_CONTROL_PIN, OUTPUT);
     //pinMode(FLOW_CONTROL_PIN, OUTPUT);
@@ -26,6 +43,8 @@ void setup(){
 
     // For debugging to the computer
     Serial.begin(9600);
+
+
 }
 
 void loop(){
@@ -37,6 +56,8 @@ void loop(){
 
     int res = SDIBus->refresh(addr, altno, &waitTime, &numExpected);
     if(res != 0){
+      Serial.print("Received res = ");
+      Serial.println(res);
     }
     else{
         delay(1000);
