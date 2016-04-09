@@ -114,6 +114,10 @@ int SDIBusController::acknowledgeActive(char addr) {
 }
 
 int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInfo){
+  if (!this->isValidAddress(addr)) {
+    SDIBusErrno = BAD_ADDRESS;
+    return -1;
+  }
 
   mySDIStream.setBufferWrite();
   mySDIStream.sendPreamble();
@@ -160,6 +164,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
   }
 
   //Optional field
+
   int term = 0;
   int optInd = 0;
   while (!term && optInd < 13) {
@@ -167,6 +172,7 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
       devInfo->optional[optInd] = mySDIStream.read();
       if (devInfo->optional[optInd] == '\r') {//Add support for \n?
         devInfo->optional[optInd] = '\0';
+        mySDIStream.read(); // final \n character
         term = 1;
       }
       optInd++;

@@ -139,7 +139,7 @@ TEST_F(SDIBusControllerTest, acknowledgeActiveBadAddress) {
   ASSERT_EQ(SDIBusErrno, BAD_ADDRESS);                // ensure proper error number
 }
 
-/*
+
 //Testing identify
 TEST_F(SDIBusControllerTest, identifyNoOpt){
   transactionSequence("aI!", "a13HYDROSNS123456789\r\n");
@@ -155,7 +155,7 @@ TEST_F(SDIBusControllerTest, identifyNoOpt){
   ASSERT_STREQ(devInfo.modelNum, "123456");
   ASSERT_STREQ(devInfo.sensorVersion, "789");
 }
-*/
+
 
 /*
 TEST_F(SDIBusControllerTest, identifyPartialOpt){
