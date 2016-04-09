@@ -257,9 +257,9 @@ TEST_F(SDIBusControllerTest, getData) {
   transactionSequence("0D0!", "0+3.72-4.132\r\n");
 
   int numExpected = 2;
-  float buffer[16];
+  float buffer[numExpected];
   int res = sdiBusPtr->getData('0', buffer, numExpected);
-  ASSERT_EQ(res, 2);              // ensure response is equal to the number of values we get out
+  ASSERT_EQ(res, 0);              // ensure response is equal to 0
   ASSERT_EQ(buffer[0], 3.72f);    // ensure we get the proper floating point values out
   ASSERT_EQ(buffer[1], -4.132f);
 }
@@ -279,9 +279,9 @@ TEST_F(SDIBusControllerTest, getDataMultipleQueries) {
   }
 
   int numExpected = 2;
-  float buffer[16];
+  float buffer[numExpected];
   int res = sdiBusPtr->getData('a', buffer, numExpected);
-  ASSERT_EQ(res, 2);              // ensure response is equal to the number of values we get out
+  ASSERT_EQ(res, 0);              // ensure response is equal to 0
   ASSERT_EQ(buffer[0], 3.72f);    // ensure we get the proper floating point values out
   ASSERT_EQ(buffer[1], -4.132f);
 }
