@@ -5,6 +5,7 @@
 #include <Stream.h>
 
 #include "SDIStream.hpp"
+#define SERIAL_7E1 0x24
 
 class SDISerial : public SDIStream {
 private:

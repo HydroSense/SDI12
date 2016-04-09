@@ -18,6 +18,9 @@ public:
 
   MOCK_METHOD1(write, int(char));
   MOCK_METHOD1(write, int(char*));
+
+  MOCK_METHOD0(begin, void());
+  MOCK_METHOD0(end, void());
 };
 
 #endif
