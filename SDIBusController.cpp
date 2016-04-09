@@ -167,16 +167,18 @@ int SDIBusController::identify(char addr, struct SDIDeviceIdentification* devInf
 
   int term = 0;
   int optInd = 0;
-  while (!term && optInd < 13) {
+  while (!term && optInd < 14) {
     if (mySDIStream.available()) {
       devInfo->optional[optInd] = mySDIStream.read();
       if (devInfo->optional[optInd] == '\r') {//Add support for \n?
         devInfo->optional[optInd] = '\0';
-        mySDIStream.read(); // final \n character
         term = 1;
       }
       optInd++;
     }
+  }
+  if(mySDIStream.available()){
+    mySDIStream.read(); // throw away the rest
   }
   return 0;
 }

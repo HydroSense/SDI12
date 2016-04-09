@@ -157,10 +157,10 @@ TEST_F(SDIBusControllerTest, identifyNoOpt){
 }
 
 
-/*
 TEST_F(SDIBusControllerTest, identifyPartialOpt){
   //Partial optional
-  Serial1.transactionSequence("a13HYDROSNS123456789ThisIsPart\r\n");
+  transactionSequence("aI!", "a13HYDROSNS123456789ThisIsPart\r\n");
+
   struct SDIDeviceIdentification devInfo;
   int res = sdiBusPtr->identify('a', &devInfo);
 
@@ -171,12 +171,12 @@ TEST_F(SDIBusControllerTest, identifyPartialOpt){
   ASSERT_STREQ(devInfo.modelNum, "123456");
   ASSERT_STREQ(devInfo.sensorVersion, "789");
   ASSERT_STREQ(devInfo.optional, "ThisIsPart");
-  ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aI!");
 }
 
 TEST_F(SDIBusControllerTest, identifyFullOpt){
   //Full optional
-  Serial1.transactionSequence("a13HYDROSNS123456789ThisIsFullTST\r\n");
+  transactionSequence("aI!", "a13HYDROSNS123456789ThisIsFullTST\r\n");
+
   struct SDIDeviceIdentification devInfo;
   int res = sdiBusPtr->identify('a', &devInfo);
 
@@ -187,9 +187,7 @@ TEST_F(SDIBusControllerTest, identifyFullOpt){
   ASSERT_STREQ(devInfo.modelNum, "123456");
   ASSERT_STREQ(devInfo.sensorVersion, "789");
   ASSERT_STREQ(devInfo.optional, "ThisIsFullTST");
-  ASSERT_STREQ(Serial1.getOutputHistory().c_str(), "aI!");
 }
-*/
 
 
 TEST_F(SDIBusControllerTest, changeGoodAddress) {
