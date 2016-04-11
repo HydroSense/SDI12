@@ -74,96 +74,64 @@ Returns the character of the address or **'\0'** if no sensor was found
 
 
 
-# `SDI12Slave`
+# `SDI12Sensor`
 Slave mode for SDI-12.  Respond to master queries, returning data that the master requests.
 
-### `SDI12Slave::SDI12Slave(int pin)`
-Initialize a slave object.
+### `SDI12Sensor::SDI12Sensor(SDIStream& stream, char addr)`
+Initialize a sensor object.
 
 #### Arguments
-  * **pin**: digital I/O pin used for flow control
+  * **stream**: SDIStream object that will send the data
+  * **addr**: Initial address of the sensor
 
 
-### `void SDI12Slave::ack(unsigned int seconds, unsigned int numResponses)`
-Acknowledge an SDI-12 data request.  Lets the master know how long it will take
-for the slave to respond and what data is going to respond.
-
-#### Arguments
-  * **seconds**: number of seconds it will take to process the request
-  * **numResponses**: number of measurement values the slave will respond with
-
-#### Return Value
-None.
-
-
-### `int SDI12Slave::begin()`
-Starts the SDI-12 object, binds the hardware serial port and digial I/O pins.
+### `int SDI12Sensor::listen()`
+Starts the active listening phase.  Blocks until `stop()` is called by a handler,
+will call appropriate event handlers if they are registered.
 
 #### Arguments
 None.
 
 #### Return Value
-None.
+Will never return, if it does, will specify an error code.
 
 
-### `void SDI12Slave::beginTransmission()`
-Starts an SDI-12 transmission, performs synchronization to ensure data is being
-written at the same time.
+### `int SDI12Sensor::setIdentification(SDI12DeviceIdentification& identification)`
+Sets the identification information that the device should return if requested
+by the datalogger.
 
 #### Arguments
-None.
+  * **identification**: Object with identification information in it
 
 #### Return Value
-None.
+Zero if successful, error code otherwise.
 
 
-### `void SDI12Slave::end()`
-Stops the SDI-12 slave device and unbinds hardware serial device and I/O pin.
+### `int SDI12Sensor::registerStartMeasurementHandler(SDIResponse (*handler)(void))`
+Registers a function to handle a request to start measurement.
 
 #### Arguments
-None.
+  * **handler**: Event handler function, needs to return an `SDIResponse`
 
 #### Return Value
-None.
+Zero if successful, error code otherwise.
 
 
-### `void SDI12Slave::endTransmission()`
-Ends an SDI-12 transmission.
+### `int SDI12::registerStartAltMeasurementHandler(SDIResponse (*handler)(int altno))`
+Registers a function to handle a request to start an alternative measurement.
 
 #### Arguments
-None.
+  * **handler**: Event handler function, needs to return an `SDIResponse`. Takes an integer that is the alternative number.
 
 #### Return Value
-None.
+Zero if successful, error code otherwise.
 
 
-### `char SDI12Slave::listen()`
-Wait for a data request command from the master.  Function blocks until a command
-has been received.  Also allows other internal SDI-12 protocol commands to be
-processed by the library.
+### `int SDI12::registerGetDataHandler(float* (*handler)(void))`
+Registers a function to handle a request for data.
 
 #### Arguments
-None.
+  * **handler**: Event handler function, needs to return an `SDIResponse`
 
 #### Return Value
-The command number that has been received.  Set to '0' if this is a standard
-measurement request ('aM!').
-
-
-### `int SDI12Slave::write(int value)`
-Appends the data to the response string.  Does not send the value
-
-#### Arguments
-  * **value**: Value to send
-
-#### Return Value
-0 if append is successful
-
-<0 if out of buffer space
-
-
-### `int SDI12Slave::write(float value)`
-Appends the data to the response string.
-
-#### Arguments
-  * **value**: Value to send
+Zero if successful, error code otherwise.
