@@ -28,6 +28,7 @@ public:
   SDIRemoteSensor(SDIStream &bus, char addr);
   int listen();
   int setIdentification(SDIDeviceIdentification &id);
+  struct SDIDeviceIdentification getMySDIDeviceIdentification();
 
 /*
   // status functions

@@ -26,6 +26,10 @@ int SDIRemoteSensor::setIdentification(SDIDeviceIdentification &id){
   return 0;
 }
 
+struct SDIDeviceIdentification SDIRemoteSensor::getMySDIDeviceIdentification(){
+  return this->mySDIDeviceIdentification;
+}
+
 /*
 // status functions
 int SDIRemoteSensor::busy() {

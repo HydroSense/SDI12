@@ -52,7 +52,13 @@ TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   strcpy(myID.optional, "");
 
   int result = sensorPtr->setIdentification(myID);
-//  ASSERT_STREQ(sensorPtr->)
+  struct SDIDeviceIdentification readID = sensorPtr->getMySDIDeviceIdentification();
+  ASSERT_STREQ(readID.addr, "a");
+  ASSERT_STREQ(readID.sdiVersion, "13");
+  ASSERT_STREQ(readID.vendor, "HYDROSNS");
+  ASSERT_STREQ(readID.modelNum, "123456");
+  ASSERT_STREQ(readID.sensorVersion, "789");
+  ASSERT_STREQ(readID.optional, "");
 }
 
 /*
