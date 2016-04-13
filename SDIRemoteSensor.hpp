@@ -4,8 +4,17 @@
 #define SDI_MAX_DATA 8
 
 #include <Arduino.h>
-
 #include "SDISerial.hpp"
+
+struct SDIDeviceIdentification{
+  char addr[2] = {0};
+  char sdiVersion[3] = {0};
+  char vendor[9] = {0};
+  char modelNum[7] = {0};
+
+  char sensorVersion[4] = {0};
+  char optional[14] = {0};
+};
 
 class SDIRemoteSensor {
 private:
@@ -14,9 +23,11 @@ private:
   bool busy;
   unsigned long timeReady;
   float data[SDI_MAX_DATA];
+  struct SDIDeviceIdentification mySDIDeviceIdentification;
 public:
   SDIRemoteSensor(SDIStream &bus, char addr);
   int listen();
+  int setIdentification(SDIDeviceIdentification &id);
 
 /*
   // status functions

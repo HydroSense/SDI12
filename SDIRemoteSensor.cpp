@@ -9,14 +9,21 @@
 SDIRemoteSensor::SDIRemoteSensor(SDIStream &bus, char addr):
   mySDIStream(bus) {
 
-  this->address = address;
+  this->address = addr;
 
   busy = false;
   timeReady = 0;
 }
 
+//TODO implement this
 int SDIRemoteSensor::listen(){
   return 0; // testing
+}
+
+// TODO ensure it's ok not to deep copy
+int SDIRemoteSensor::setIdentification(SDIDeviceIdentification &id){
+  memcpy(&(this->mySDIDeviceIdentification), &id, sizeof(struct SDIDeviceIdentification));
+  return 0;
 }
 
 /*

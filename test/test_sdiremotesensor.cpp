@@ -10,6 +10,7 @@ protected:
   SDIRemoteSensor* sensorPtr;
   ArduinoMock &mockArduino;
   MockSDIStream mockSDIStream;
+  char address = 'a';
 
 public:
   /*
@@ -28,16 +29,30 @@ public:
   }
 
   virtual void SetUp() {
+    sensorPtr = new SDIRemoteSensor(mockSDIStream, address);
   }
 
   virtual void TearDown() {
   }
 };
 
-TEST_F(SDIRemoteSensorTest, listenTest) {
+TEST_F(SDIRemoteSensorTest, listen) {
   int result = sensorPtr->listen();
 
   ASSERT_EQ(result, 0);
+}
+
+TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
+  struct SDIDeviceIdentification myID;
+  strcpy(myID.addr, "a");
+  strcpy(myID.sdiVersion, "13");
+  strcpy(myID.vendor, "HYDROSNS");
+  strcpy(myID.modelNum, "123456");
+  strcpy(myID.sensorVersion, "789");
+  strcpy(myID.optional, "");
+
+  int result = sensorPtr->setIdentification(myID);
+//  ASSERT_STREQ(sensorPtr->)
 }
 
 /*

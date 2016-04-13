@@ -5,7 +5,6 @@
 
 #include "SDIStream.hpp"
 #include "SDIBusController.hpp"
-#include "SDIRemoteSensor.hpp"
 
 SDIBusError SDIBusErrno;
 
