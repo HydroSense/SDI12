@@ -1,26 +1,30 @@
-/*
-
 #include <Arduino.h>
-#include <SDIBusController.hpp>
 #include <SDIRemoteSensor.hpp>
+#include <mock_SDIStream.hpp>
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
 class SDIRemoteSensorTest : public ::testing::Test {
-private:
-  MockSDIBusController* mockBusControllerPtr;
+protected:
   SDIRemoteSensor* sensorPtr;
-  char address;
+  ArduinoMock &mockArduino;
+  MockSDIStream mockSDIStream;
 
 public:
+  /*
   SDIRemoteSensorTest() {
-    address = 'a';
+    char address = 'a';
     mockBusControllerPtr = new MockSDIBusController();
     sensorPtr = new SDIRemoteSensor(*mockBusControllerPtr, address);
   }
+  */
+  SDIRemoteSensorTest():
+    mockArduino(*arduinoMockInstance()){
+    }
 
   ~SDIRemoteSensorTest() {
-    delete sensorPtr;
-    delete MockSDIBusControllerPtr;
+    releaseArduinoMock();
   }
 
   virtual void SetUp() {
@@ -28,14 +32,13 @@ public:
 
   virtual void TearDown() {
   }
-}
+};
 
-TEST_F(SDIRemoteSensorTest, busyAtStart) {
-  int busy = sensorPtr->busy();
+TEST_F(SDIRemoteSensorTest, listenTest) {
+  int result = sensorPtr->listen();
 
-  ASSERT_EQ(busy, 0);
+  ASSERT_EQ(result, 0);
 }
-*/
 
 /*
 TEST_F(SDIRemoteSensorTest, querySensorAddress) {

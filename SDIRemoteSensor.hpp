@@ -1,22 +1,24 @@
-#if 0
-
 #ifndef SDI_REMOTE_SENSOR_H
 #define SDI_REMOTE_SENSOR_H
 
 #define SDI_MAX_DATA 8
 
-#include "SDIBusController.hpp"
+#include <Arduino.h>
+
+#include "SDISerial.hpp"
 
 class SDIRemoteSensor {
 private:
-  SDIBusController& mBus;
-  char mAddress;
-  bool mBusy;
-  unsigned long mTimeReady;
-  float mData[SDI_MAX_DATA];
+  SDIStream &mySDIStream;
+  char address;
+  bool busy;
+  unsigned long timeReady;
+  float data[SDI_MAX_DATA];
 public:
-  SDIRemoteSensor(SDIBusController& bus, char address);
+  SDIRemoteSensor(SDIStream &bus, char addr);
+  int listen();
 
+/*
   // status functions
   int busy();
   static char querySensorAddress();
@@ -30,8 +32,8 @@ public:
 
   // getters
   float* getData();
-}
+  */
+};
 
-#endif
 
 #endif

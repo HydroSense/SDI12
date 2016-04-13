@@ -1,20 +1,25 @@
-#if 0
+#ifndef __SDI_REMOTE_SENSOR_CPP
+#define __SDI_REMOTE_SENSOR_CPP
 
-#include <Arduino.h>
+#include <stdlib.h>
 
 #include "SDIStream.hpp"
 #include "SDIRemoteSensor.hpp"
 
-SDIRemoteSensor::SDIRemoteSensor(SDIBusController& bus, char address):
-  mBus(bus) {
+SDIRemoteSensor::SDIRemoteSensor(SDIStream &bus, char addr):
+  mySDIStream(bus) {
 
-  mAddress = address;
+  this->address = address;
 
-  mBusy = false;
-  mTimeReady = 0;
-  mNumExpected = 0;
+  busy = false;
+  timeReady = 0;
 }
 
+int SDIRemoteSensor::listen(){
+  return 0; // testing
+}
+
+/*
 // status functions
 int SDIRemoteSensor::busy() {
   if (!mBusy) {
@@ -67,4 +72,5 @@ float* SDIRemoteSensor::getData() {
   }
 }
 
+*/
 #endif
