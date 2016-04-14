@@ -26,10 +26,10 @@ int SDIRemoteSensor::setIdentification(SDIDeviceIdentification &id){
   return 0;
 }
 
-struct SDIDeviceIdentification SDIRemoteSensor::getMySDIDeviceIdentification(){
-  return this->mySDIDeviceIdentification;
+// TODO figure this out
+int SDIRemoteSensor::registerStartMeasurementHandler(SDIResponse (*handler)(void)){
+  handler();
 }
-
 /*
 // status functions
 int SDIRemoteSensor::busy() {
@@ -84,4 +84,9 @@ float* SDIRemoteSensor::getData() {
 }
 
 */
+
+struct SDIDeviceIdentification SDIRemoteSensor::getMySDIDeviceIdentification(){
+  return this->mySDIDeviceIdentification;
+}
+
 #endif

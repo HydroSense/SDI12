@@ -6,6 +6,17 @@
 #include <Arduino.h>
 #include "SDISerial.hpp"
 
+enum SDIResponse {
+  OK=0,
+  BUSY=1,
+  ADDRESS_IN_USE=2,
+  BAD_ADDRESS=3,
+  NO_SPACE=4,
+  TIMEOUT=5,
+  UNREGISTERED_SENSOR=6,
+  RESPONSE_ERROR=7
+};
+
 struct SDIDeviceIdentification{
   char addr[2] = {0};
   char sdiVersion[3] = {0};
@@ -28,6 +39,9 @@ public:
   SDIRemoteSensor(SDIStream &bus, char addr);
   int listen();
   int setIdentification(SDIDeviceIdentification &id);
+  int registerStartMeasurementHandler(SDIResponse (*handler)(void));
+
+  // For unit tests
   struct SDIDeviceIdentification getMySDIDeviceIdentification();
 
 /*
