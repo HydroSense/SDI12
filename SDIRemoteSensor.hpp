@@ -31,7 +31,6 @@ class SDIRemoteSensor {
 private:
   SDIStream &mySDIStream;
   char address;
-  bool busy;
   unsigned long timeReady;
   float data[SDI_MAX_DATA];
   struct SDIDeviceIdentification mySDIDeviceIdentification;
@@ -39,7 +38,9 @@ public:
   SDIRemoteSensor(SDIStream &bus, char addr);
   int listen();
   int setIdentification(SDIDeviceIdentification &id);
-  int registerStartMeasurementHandler(SDIResponse (*handler)(void));
+  int registerStartMeasurementHandler(int (*handler)(void));
+  int registerStartAltMeasurementHandler(int altno, int (*handler)(int altno));
+  int registerGetDataHandler(float *(*handler)(void));
 
   // For unit tests
   struct SDIDeviceIdentification getMySDIDeviceIdentification();

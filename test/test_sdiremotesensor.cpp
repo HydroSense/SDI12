@@ -61,6 +61,19 @@ TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   ASSERT_STREQ(readID.optional, "");
 }
 
+int dummyHandler(){
+  // Made up data.
+  char *data = (char *)"+150-60+25";
+  return 0;
+//  return SDIResponse::OK;
+}
+
+TEST_F(SDIRemoteSensorTest, registerStartMeasurementHandler){
+  int result = sensorPtr->registerStartMeasurementHandler(dummyHandler);
+  ASSERT_EQ(result, 0);
+}
+
+
 /*
 TEST_F(SDIRemoteSensorTest, querySensorAddress) {
   char *addr;

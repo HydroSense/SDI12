@@ -11,7 +11,6 @@ SDIRemoteSensor::SDIRemoteSensor(SDIStream &bus, char addr):
 
   this->address = addr;
 
-  busy = false;
   timeReady = 0;
 }
 
@@ -27,9 +26,24 @@ int SDIRemoteSensor::setIdentification(SDIDeviceIdentification &id){
 }
 
 // TODO figure this out
-int SDIRemoteSensor::registerStartMeasurementHandler(SDIResponse (*handler)(void)){
-  handler();
+int SDIRemoteSensor::registerStartMeasurementHandler(int (*handler)(void)){
+  int res = handler();
+  if(res == SDIResponse::OK){
+    return 0;
+  }
+  return -1; // error
 }
+
+int SDIRemoteSensor::registerStartAltMeasurementHandler(int altno, int (*handler)(int altno)){
+  handler(altno);
+  return 0;
+}
+
+int SDIRemoteSensor::registerGetDataHandler(float *(*handler)(void)){
+  handler();
+  return 0;
+}
+
 /*
 // status functions
 int SDIRemoteSensor::busy() {
