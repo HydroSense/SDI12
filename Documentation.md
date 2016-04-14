@@ -60,7 +60,15 @@ None.
 #### Return Value
 Returns `NULL` if the sensor isn't ready.
 
+### `int SDIRemoteSensor:::isReady()`
+Returns `1` if the right amount of time has passed between, `0` if either no measurement is active
+or not enought time has passed.  This is used to determine when to call `getData()`.
 
+#### Arguments
+None.
+
+#### Return Value
+`1` if measurements are ready, `0` otherwise.
 
 ### `static char SDIRemoteSensor::querySensorAddress()`
 Queries the bus to see if there is a sensor on it.
