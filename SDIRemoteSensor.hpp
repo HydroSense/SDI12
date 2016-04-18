@@ -31,8 +31,6 @@ class SDIRemoteSensor {
 private:
   SDIStream &mySDIStream;
   char address;
-  unsigned long timeReady;
-  float data[SDI_MAX_DATA];
   struct SDIDeviceIdentification mySDIDeviceIdentification;
 public:
   SDIRemoteSensor(SDIStream &bus, char addr);

@@ -8,10 +8,7 @@
 
 SDIRemoteSensor::SDIRemoteSensor(SDIStream &bus, char addr):
   mySDIStream(bus) {
-
   this->address = addr;
-
-  timeReady = 0;
 }
 
 //TODO implement this
