@@ -53,15 +53,6 @@ public:
   virtual int getData(char addr, float* buffer, int numExpected);
   virtual int changeAddress(char oldAddr, char newAddr);
 
-  virtual int respondToAcknowledgeActive(char addr);
-
-  //virtual int respondToSendIdentificationNoOpt(char addr);
-  //virtual int respondToSendIdentificationPartialOpt(char addr);
-  //virtual int respondToSendIdentificationFullOpt(char addr);
-
-  virtual int respondToChangeAddress(char addr);
-  virtual int respondToAddressQuery(char addr);
-  virtual int respondToRefresh(char addr, int altno);
 };
 
 #endif
