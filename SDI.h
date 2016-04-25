@@ -5,6 +5,6 @@
 #include "SDIStream.hpp"
 
 #include "SDIBusController.hpp"
-#include "SDIRemoteSensor.hpp"
+//#include "SDIRemoteSensor.hpp"
 
 #endif

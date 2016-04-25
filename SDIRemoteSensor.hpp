@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #include "SDISerial.hpp"
 
-enum SDIResponse {
+enum SDIError {
   OK=0,
   BUSY=1,
   ADDRESS_IN_USE=2,
@@ -27,18 +27,23 @@ struct SDIDeviceIdentification{
   char optional[14] = {0};
 };
 
+typedef char* SDIResponse;
+
 class SDIRemoteSensor {
 private:
   SDIStream &mySDIStream;
   char address;
   struct SDIDeviceIdentification mySDIDeviceIdentification;
+  SDIResponse (*startMeasurementHandler)(void);
+  SDIResponse (*startAltMeasurementHandler)(int altno);
+  SDIResponse (*getDataHandler)(void);
 public:
   SDIRemoteSensor(SDIStream &bus, char addr);
   int listen();
   int setIdentification(SDIDeviceIdentification &id);
-  int registerStartMeasurementHandler(int (*handler)(void));
-  int registerStartAltMeasurementHandler(int altno, int (*handler)(int altno));
-  int registerGetDataHandler(float *(*handler)(void));
+  int registerStartMeasurementHandler(SDIResponse (*handler)(void));
+  int registerStartAltMeasurementHandler(SDIResponse (*handler)(int altno));
+  int registerGetDataHandler(SDIResponse (*handler)(void));
 
   // For unit tests
   struct SDIDeviceIdentification getMySDIDeviceIdentification();

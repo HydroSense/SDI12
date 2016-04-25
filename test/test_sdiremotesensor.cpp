@@ -61,7 +61,7 @@ TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   ASSERT_STREQ(readID.optional, "");
 }
 
-int dummyHandler(){
+SDIResponse dummyHandler(){
   // Made up data.
   char *data = (char *)"+150-60+25";
   return 0;

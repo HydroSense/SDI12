@@ -16,27 +16,25 @@ int SDIRemoteSensor::listen(){
   return 0; // testing
 }
 
-// TODO ensure it's ok not to deep copy
 int SDIRemoteSensor::setIdentification(SDIDeviceIdentification &id){
   memcpy(&(this->mySDIDeviceIdentification), &id, sizeof(struct SDIDeviceIdentification));
   return 0;
 }
 
 // TODO figure this out
-int SDIRemoteSensor::registerStartMeasurementHandler(int (*handler)(void)){
-  int res = handler();
-  if(res == SDIResponse::OK){
-    return 0;
-  }
-  return -1; // error
-}
-
-int SDIRemoteSensor::registerStartAltMeasurementHandler(int altno, int (*handler)(int altno)){
-  handler(altno);
+int SDIRemoteSensor::registerStartMeasurementHandler(SDIResponse (*handler)(void)){
+  // SDIResponse res = handler();
+  // if(res == SDIError::OK){
+  //   return 0;
+  // }
   return 0;
 }
 
-int SDIRemoteSensor::registerGetDataHandler(float *(*handler)(void)){
+int SDIRemoteSensor::registerStartAltMeasurementHandler(SDIResponse (*handler)(int altno)){
+  return 0;
+}
+
+int SDIRemoteSensor::registerGetDataHandler(SDIResponse (*handler)(void)){
   handler();
   return 0;
 }
