@@ -42,15 +42,27 @@ public:
   }
 
   void transactionSequence(const char *out, const char *in){
+      /* This is really frustrating it's not working. The sequence should be:
+      1 - available()
+      1 - peek()
+      1 - available()
+      strlen(in) - read()
+      */
+      EXPECT_CALL(mockArduino, delay(_))
+      .Times(AnyNumber());
       printf("in: %s, strlen(in): %d\n", in, strlen(in));
+
         {
             InSequence sequence;
 
             EXPECT_CALL(mockSDIStream, available())
-            .WillOnce(Return(strlen(in)));
+            .WillRepeatedly(Return(strlen(in)));
 
             EXPECT_CALL(mockSDIStream, peek())
             .WillOnce(Return('!')); // last character is always '!'
+
+            EXPECT_CALL(mockSDIStream, available())
+            .WillRepeatedly(Return(strlen(in)));
 
             for(int i=0; in[i] != '\0'; i++){
                 EXPECT_CALL(mockSDIStream, read())
@@ -62,6 +74,37 @@ public:
 
   }
 };
+
+SDIResponse dummyStartMeasurementHandler(){
+  // Made up data.
+  char *data = new char;
+  // response: atttn<CR><LF>
+  data = (char *)"a0013";
+  return data;
+//  return SDIResponse::OK;
+}
+
+SDIResponse dummyGetDataHandler(){
+    char *data = new char;
+    // response: a<values><CR><LF>
+    data = (char *) "a+150-60+25";
+    return data;
+}
+
+TEST_F(SDIRemoteSensorTest, listenStartMeasurementTest){
+  sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
+    /*
+    EXPECT_CALL(mockSDIStream, available()).WillRepeatedly(Return(3));
+    EXPECT_CALL(mockSDIStream, peek()).WillOnce(Return('!'));
+    EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[0]))
+    .WillOnce(Return(str[1]))
+    .WillOnce(Return(str[2]));
+    */
+    char *fromController = (char *) "aC!";
+    transactionSequence("", fromController);
+    int result = sensorPtr->listen();
+    ASSERT_EQ(result, 0);
+}
 
 TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   struct SDIDeviceIdentification myID;
@@ -82,40 +125,9 @@ TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   ASSERT_STREQ(readID.optional, "");
 }
 
-SDIResponse dummyStartMeasurementHandler(){
-  // Made up data.
-  char *data = new char;
-  // response: atttn<CR><LF>
-  data = (char *)"a0013";
-  return data;
-//  return SDIResponse::OK;
-}
-
-SDIResponse dummyGetDataHandler(){
-    char *data = new char;
-    // response: a<values><CR><LF>
-    data = (char *) "a+150-60+25";
-    return data;
-}
-
 TEST_F(SDIRemoteSensorTest, registerStartMeasurementHandler){
   int result = sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
   ASSERT_EQ(result, 0);
-}
-
-TEST_F(SDIRemoteSensorTest, listenStartMeasurementTest){
-  sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
-    /*
-    EXPECT_CALL(mockSDIStream, available()).WillRepeatedly(Return(3));
-    EXPECT_CALL(mockSDIStream, peek()).WillOnce(Return('!'));
-    EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[0]))
-    .WillOnce(Return(str[1]))
-    .WillOnce(Return(str[2]));
-    */
-    char *fromController = (char *) "aC!";
-    transactionSequence("", fromController);
-    int result = sensorPtr->listen();
-    ASSERT_EQ(result, 0);
 }
 
 TEST_F(SDIRemoteSensorTest, listenGetDataTest){

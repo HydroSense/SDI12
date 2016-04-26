@@ -17,10 +17,10 @@ bool SDIRemoteSensor::isMyAddress(char otherAddress){
 
 //TODO implement this
 int SDIRemoteSensor::listen(){
-    while(!mySDIStream.available()){
+    while(0 == mySDIStream.available()){
         delay(1);
     }
-    delay(1);
+    delay(11);
     int numDelays = 0;
     // Now that we've received at least 1 character, wait until received "\r\n"
     while(mySDIStream.peek() != '!'){
