@@ -11,6 +11,10 @@ SDIRemoteSensor::SDIRemoteSensor(SDIStream &bus, char addr):
   this->address = addr;
 }
 
+bool SDIRemoteSensor::isMyAddress(char otherAddress){
+    return (this->address == otherAddress) || ('?' == otherAddress);
+}
+
 //TODO implement this
 int SDIRemoteSensor::listen(){
     while(!mySDIStream.available()){
@@ -18,7 +22,7 @@ int SDIRemoteSensor::listen(){
     }
     int numDelays = 0;
     // Now that we've received at least 1 character, wait until received "\r\n"
-    while(mySDIStream.peek() != '\n'){
+    while(mySDIStream.peek() != '!'){
         delay(10);
         numDelays++;
         if(numDelays > 10){ // timeout
@@ -33,15 +37,28 @@ int SDIRemoteSensor::listen(){
     }
     cmd[bufSize] = '\0'; // null terminator
     printf("Received command: %s\n", cmd);
-
-    if(0 == strcmp(cmd, "abc\r\n")){
-        printf("Received command 'abc'\n");
-        SDIResponse theResponse = this->startMeasurementHandler();
-        printf("From the handler, received: %s\n", theResponse);
-        // delete[] theResponse; // I don't know why this is an invalid pointer?
-
+    if(isMyAddress(cmd[0])){
+        // The command was addressed to us.
+        if(0 == strcmp(&cmd[1], "!")){
+            // Acknowledge Active && Address Query
+            //TODO write response
+        } else if(0 == strcmp(&cmd[1], "I!")){
+            // Send Identification
+            // TODO write response
+        } else if(0 == strcmp(&cmd[1], "C!")){
+            // Start Measurement
+            SDIResponse res = this->startMeasurementHandler();
+            printf("From the handler, received: %s\n", res);
+            // delete[] theResponse; // I don't know why this is an invalid pointer?
+            // TODO: investigate numbers following C
+        } else if(0 == strcmp(&cmd[1], "D0!")){
+            // Send Data
+            // TODO Investigate this (number following M could be 1-9)
+        } else if(0 == strcmp(&cmd[1], "Ab!")){
+            // Change Address
+            // TODO Investigate how to extend past just changing address to 'b'.
+        }
     }
-
   return 0; // testing
 }
 

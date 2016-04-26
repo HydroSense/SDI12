@@ -34,6 +34,7 @@ private:
   SDIStream &mySDIStream;
   char address;
   struct SDIDeviceIdentification mySDIDeviceIdentification;
+  bool isMyAddress(char otherAddress);
   SDIResponse (*startMeasurementHandler)(void);
   SDIResponse (*startAltMeasurementHandler)(int altno);
   SDIResponse (*getDataHandler)(void);

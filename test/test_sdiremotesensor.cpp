@@ -80,18 +80,16 @@ TEST_F(SDIRemoteSensorTest, registerStartMeasurementHandler){
 
 TEST_F(SDIRemoteSensorTest, listenStartMeasurementTest){
   sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
-    char str[] = {'a','b','c','\r','\n'};
-    EXPECT_CALL(mockSDIStream, available()).WillRepeatedly(Return(5));
-    EXPECT_CALL(mockSDIStream, peek()).WillOnce(Return('\n'));
+    char str[] = {'a','C','!'};
+    EXPECT_CALL(mockSDIStream, available()).WillRepeatedly(Return(3));
+    EXPECT_CALL(mockSDIStream, peek()).WillOnce(Return('!'));
 /*    for(int i=0; i<5; i++){
         printf("Returns: %c\n",str[i]);
         EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[i]));
     }*/
     EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[0]))
     .WillOnce(Return(str[1]))
-    .WillOnce(Return(str[2]))
-    .WillOnce(Return(str[3]))
-    .WillOnce(Return(str[4]));
+    .WillOnce(Return(str[2]));
     int result = sensorPtr->listen();
     ASSERT_EQ(result, 0);
 }
@@ -100,7 +98,7 @@ TEST_F(SDIRemoteSensorTest, listenGetDataTest){
     sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
     sensorPtr->registerGetDataHandler(dummyGetDataHandler);
 
-    
+
 }
 
 /*
