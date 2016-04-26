@@ -18,7 +18,7 @@ int SDIRemoteSensor::listen(){
     }
     int numDelays = 0;
     // Now that we've received at least 1 character, wait until received "\r\n"
-    while(mySDIStream.peek() != '\r'){
+    while(mySDIStream.peek() != '\n'){
         delay(10);
         numDelays++;
         if(numDelays > 10){ // timeout
@@ -33,6 +33,14 @@ int SDIRemoteSensor::listen(){
     }
     cmd[bufSize] = '\0'; // null terminator
     printf("Received command: %s\n", cmd);
+
+    if(0 == strcmp(cmd, "abc\r\n")){
+        printf("Received command 'abc'\n");
+        SDIResponse theResponse = this->startMeasurementHandler();
+        printf("From the handler, received: %s\n", theResponse);
+        // delete[] theResponse; // I don't know why this is an invalid pointer?
+
+    }
 
   return 0; // testing
 }
