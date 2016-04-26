@@ -13,6 +13,27 @@ SDIRemoteSensor::SDIRemoteSensor(SDIStream &bus, char addr):
 
 //TODO implement this
 int SDIRemoteSensor::listen(){
+    while(!mySDIStream.available()){
+        delay(1);
+    }
+    int numDelays = 0;
+    // Now that we've received at least 1 character, wait until received "\r\n"
+    while(mySDIStream.peek() != '\r'){
+        delay(10);
+        numDelays++;
+        if(numDelays > 10){ // timeout
+            return -1;
+        }
+    }
+    // Now we have the command. Read it into a buffer, then act on the command.
+    int bufSize = mySDIStream.available()+1;
+    char *cmd = new char[mySDIStream.available()+1];
+    for(int i=0; i<bufSize-1; i++){
+        cmd[i] = (char) mySDIStream.read();
+    }
+    cmd[bufSize] = '\0'; // null terminator
+    printf("Received command: %s\n", cmd);
+
   return 0; // testing
 }
 
@@ -23,10 +44,8 @@ int SDIRemoteSensor::setIdentification(SDIDeviceIdentification &id){
 
 // TODO figure this out
 int SDIRemoteSensor::registerStartMeasurementHandler(SDIResponse (*handler)(void)){
-  // SDIResponse res = handler();
-  // if(res == SDIError::OK){
-  //   return 0;
-  // }
+    // Bind the startMeasurementHandler to the given function.
+    this->startMeasurementHandler = handler;
   return 0;
 }
 

@@ -5,6 +5,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+using ::testing::Return;
+
 class SDIRemoteSensorTest : public ::testing::Test {
 protected:
   SDIRemoteSensor* sensorPtr;
@@ -36,12 +38,6 @@ public:
   }
 };
 
-TEST_F(SDIRemoteSensorTest, listen) {
-  int result = sensorPtr->listen();
-
-  ASSERT_EQ(result, 0);
-}
-
 TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   struct SDIDeviceIdentification myID;
   strcpy(myID.addr, "a");
@@ -61,18 +57,34 @@ TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   ASSERT_STREQ(readID.optional, "");
 }
 
-SDIResponse dummyHandler(){
+SDIResponse dummyStartMeasurementHandler(){
   // Made up data.
   char *data = (char *)"+150-60+25";
-  return 0;
+  return data;
 //  return SDIResponse::OK;
 }
 
 TEST_F(SDIRemoteSensorTest, registerStartMeasurementHandler){
-  int result = sensorPtr->registerStartMeasurementHandler(dummyHandler);
+  int result = sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
   ASSERT_EQ(result, 0);
 }
 
+TEST_F(SDIRemoteSensorTest, listenTest){
+    char str[] = {'a','b','c','\n','\r'};
+    EXPECT_CALL(mockSDIStream, available()).WillRepeatedly(Return(5));
+    EXPECT_CALL(mockSDIStream, peek()).WillOnce(Return('\r'));
+/*    for(int i=0; i<5; i++){
+        printf("Returns: %c\n",str[i]);
+        EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[i]));
+    }*/
+    EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[0]))
+    .WillOnce(Return(str[1]))
+    .WillOnce(Return(str[2]))
+    .WillOnce(Return(str[3]))
+    .WillOnce(Return(str[4]));
+    int result = sensorPtr->listen();
+    ASSERT_EQ(result, 0);
+}
 
 /*
 TEST_F(SDIRemoteSensorTest, querySensorAddress) {
