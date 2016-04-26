@@ -20,7 +20,7 @@ int SDIRemoteSensor::listen(){
     while(0 == mySDIStream.available()){
         delay(1);
     }
-    delay(11);
+    delay(10);
     int numDelays = 0;
     // Now that we've received at least 1 character, wait until received "\r\n"
     while(mySDIStream.peek() != '!'){
@@ -56,6 +56,7 @@ int SDIRemoteSensor::listen(){
             // TODO: investigate numbers following C
         } else if(0 == strcmp(&cmd[1], "D0!")){
             // Send Data
+            printf("Get Data Command Received\n");
             SDIResponse res = this->getDataHandler();
             printf("From the handler, received: %s\n", res);
             // TODO Investigate this (number following M could be 1-9)
@@ -83,11 +84,13 @@ int SDIRemoteSensor::registerStartMeasurementHandler(SDIResponse (*handler)(void
 }
 
 int SDIRemoteSensor::registerStartAltMeasurementHandler(SDIResponse (*handler)(int altno)){
+    this->startAltMeasurementHandler = handler;
   return 0;
 }
 
 int SDIRemoteSensor::registerGetDataHandler(SDIResponse (*handler)(void)){
   handler();
+  this->getDataHandler = handler;
   return 0;
 }
 

@@ -42,7 +42,7 @@ public:
   }
 
   void transactionSequence(const char *out, const char *in){
-      /* This is really frustrating it's not working. The sequence should be:
+      /*  The sequence should be:
       1 - available()
       1 - peek()
       1 - available()
@@ -91,21 +91,6 @@ SDIResponse dummyGetDataHandler(){
     return data;
 }
 
-TEST_F(SDIRemoteSensorTest, listenStartMeasurementTest){
-  sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
-    /*
-    EXPECT_CALL(mockSDIStream, available()).WillRepeatedly(Return(3));
-    EXPECT_CALL(mockSDIStream, peek()).WillOnce(Return('!'));
-    EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[0]))
-    .WillOnce(Return(str[1]))
-    .WillOnce(Return(str[2]));
-    */
-    char *fromController = (char *) "aC!";
-    transactionSequence("", fromController);
-    int result = sensorPtr->listen();
-    ASSERT_EQ(result, 0);
-}
-
 TEST_F(SDIRemoteSensorTest, setIdentificationNoOpt){
   struct SDIDeviceIdentification myID;
   strcpy(myID.addr, "a");
@@ -133,8 +118,26 @@ TEST_F(SDIRemoteSensorTest, registerStartMeasurementHandler){
 TEST_F(SDIRemoteSensorTest, listenGetDataTest){
     sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
     sensorPtr->registerGetDataHandler(dummyGetDataHandler);
+}
 
+TEST_F(SDIRemoteSensorTest, listenStartMeasurementTest){
+    sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
+    char *fromController = (char *) "aC!";
+    transactionSequence("", fromController);
+    int result = sensorPtr->listen();
+    ASSERT_EQ(result, 0);
+}
 
+TEST_F(SDIRemoteSensorTest, listenGetMeasurementTest){
+    sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
+    sensorPtr->registerGetDataHandler(dummyGetDataHandler);
+    transactionSequence("", "aC!"); // start measurement command
+    int result = sensorPtr->listen();
+    ASSERT_EQ(result, 0);
+
+    transactionSequence("", "aD0!"); // get data command
+    result = sensorPtr->listen();
+    ASSERT_EQ(result, 0);
 }
 
 /*

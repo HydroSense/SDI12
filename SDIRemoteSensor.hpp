@@ -49,21 +49,6 @@ public:
   // For unit tests
   struct SDIDeviceIdentification getMySDIDeviceIdentification();
 
-/*
-  // status functions
-  int busy();
-  static char querySensorAddress();
-
-  // modification functions
-  int changeAddress(char newAddress);
-
-  // measurement triggers
-  unsigned long startMeasurement();
-  unsigned long startAltMeasurement(int altNo);
-
-  // getters
-  float* getData();
-  */
 };
 
 
