@@ -20,6 +20,7 @@ int SDIRemoteSensor::listen(){
     while(!mySDIStream.available()){
         delay(1);
     }
+    delay(1);
     int numDelays = 0;
     // Now that we've received at least 1 character, wait until received "\r\n"
     while(mySDIStream.peek() != '!'){
@@ -38,6 +39,7 @@ int SDIRemoteSensor::listen(){
     cmd[bufSize] = '\0'; // null terminator
     printf("Received command: %s\n", cmd);
     if(isMyAddress(cmd[0])){
+        printf("Addresses match\n");
         // The command was addressed to us.
         if(0 == strcmp(&cmd[1], "!")){
             // Acknowledge Active && Address Query
@@ -47,17 +49,23 @@ int SDIRemoteSensor::listen(){
             // TODO write response
         } else if(0 == strcmp(&cmd[1], "C!")){
             // Start Measurement
+            printf("Start Measurement Command Received\n");
             SDIResponse res = this->startMeasurementHandler();
             printf("From the handler, received: %s\n", res);
             // delete[] theResponse; // I don't know why this is an invalid pointer?
             // TODO: investigate numbers following C
         } else if(0 == strcmp(&cmd[1], "D0!")){
             // Send Data
+            SDIResponse res = this->getDataHandler();
+            printf("From the handler, received: %s\n", res);
             // TODO Investigate this (number following M could be 1-9)
         } else if(0 == strcmp(&cmd[1], "Ab!")){
             // Change Address
             // TODO Investigate how to extend past just changing address to 'b'.
         }
+    } else{
+        printf("Wrong Address.\n");
+        return -1;
     }
   return 0; // testing
 }

@@ -6,6 +6,10 @@
 #include <gmock/gmock.h>
 
 using ::testing::Return;
+using ::testing::InSequence;
+using ::testing::AnyNumber;
+using ::testing::AtLeast;
+using ::testing::_;
 
 class SDIRemoteSensorTest : public ::testing::Test {
 protected:
@@ -35,6 +39,27 @@ public:
   }
 
   virtual void TearDown() {
+  }
+
+  void transactionSequence(const char *out, const char *in){
+      printf("in: %s, strlen(in): %d\n", in, strlen(in));
+        {
+            InSequence sequence;
+
+            EXPECT_CALL(mockSDIStream, available())
+            .WillOnce(Return(strlen(in)));
+
+            EXPECT_CALL(mockSDIStream, peek())
+            .WillOnce(Return('!')); // last character is always '!'
+
+            for(int i=0; in[i] != '\0'; i++){
+                EXPECT_CALL(mockSDIStream, read())
+                .WillOnce(Return(in[i]));
+            }
+
+
+        }
+
   }
 };
 
@@ -80,16 +105,15 @@ TEST_F(SDIRemoteSensorTest, registerStartMeasurementHandler){
 
 TEST_F(SDIRemoteSensorTest, listenStartMeasurementTest){
   sensorPtr->registerStartMeasurementHandler(dummyStartMeasurementHandler);
-    char str[] = {'a','C','!'};
+    /*
     EXPECT_CALL(mockSDIStream, available()).WillRepeatedly(Return(3));
     EXPECT_CALL(mockSDIStream, peek()).WillOnce(Return('!'));
-/*    for(int i=0; i<5; i++){
-        printf("Returns: %c\n",str[i]);
-        EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[i]));
-    }*/
     EXPECT_CALL(mockSDIStream, read()).WillOnce(Return(str[0]))
     .WillOnce(Return(str[1]))
     .WillOnce(Return(str[2]));
+    */
+    char *fromController = (char *) "aC!";
+    transactionSequence("", fromController);
     int result = sensorPtr->listen();
     ASSERT_EQ(result, 0);
 }
